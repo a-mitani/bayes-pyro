@@ -3,6 +3,8 @@
 baseURL = 'https://example.com/'
 title = 'Pyroで実践するベイズ機械学習'
 theme = 'book'
+publishDir = "docs"
+canonifyurls = true
 
 # Book configuration
 disablePathToLower = true
@@ -110,5 +112,3 @@ enableGitInfo = true
   # (Optional, experimental, default false) Enables a drop-down menu for translations only if a translation is present.
   BookTranslatedOnly = false
 
-  publishDir = "docs"
-  canonifyurls = true
