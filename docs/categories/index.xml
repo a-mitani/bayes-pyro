@@ -2,29 +2,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Pyroで実践するベイズ機械学習</title>
-    <link>https://example.com/categories/</link>
+    <link>https://a-mitani.github.io/bayes-pyro/categories/</link>
     <description>Recent content in Categories on Pyroで実践するベイズ機械学習</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Wed, 02 Apr 2014 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://example.com/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://a-mitani.github.io/bayes-pyro/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Development</title>
-      <link>https://example.com/categories/Development/</link>
+      <link>https://a-mitani.github.io/bayes-pyro/categories/Development/</link>
       <pubDate>Wed, 02 Apr 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://example.com/categories/Development/</guid>
+      <guid>https://a-mitani.github.io/bayes-pyro/categories/Development/</guid>
       <description></description>
     </item>
     
     <item>
       <title>golang</title>
-      <link>https://example.com/categories/golang/</link>
+      <link>https://a-mitani.github.io/bayes-pyro/categories/golang/</link>
       <pubDate>Wed, 02 Apr 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://example.com/categories/golang/</guid>
+      <guid>https://a-mitani.github.io/bayes-pyro/categories/golang/</guid>
       <description></description>
     </item>
     

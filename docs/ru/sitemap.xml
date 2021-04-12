@@ -3,59 +3,59 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://example.com/ru/categories/</loc>
+    <loc>https://a-mitani.github.io/bayes-pyro/ru/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://example.com/categories/"
+                href="https://a-mitani.github.io/bayes-pyro/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://example.com/zh/categories/"
+                href="https://a-mitani.github.io/bayes-pyro/zh/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ru"
-                href="https://example.com/ru/categories/"
+                href="https://a-mitani.github.io/bayes-pyro/ru/categories/"
                 />
   </url>
   
   <url>
-    <loc>https://example.com/ru/</loc>
+    <loc>https://a-mitani.github.io/bayes-pyro/ru/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://example.com/"
+                href="https://a-mitani.github.io/bayes-pyro/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://example.com/zh/"
+                href="https://a-mitani.github.io/bayes-pyro/zh/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ru"
-                href="https://example.com/ru/"
+                href="https://a-mitani.github.io/bayes-pyro/ru/"
                 />
   </url>
   
   <url>
-    <loc>https://example.com/ru/tags/</loc>
+    <loc>https://a-mitani.github.io/bayes-pyro/ru/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://example.com/tags/"
+                href="https://a-mitani.github.io/bayes-pyro/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://example.com/zh/tags/"
+                href="https://a-mitani.github.io/bayes-pyro/zh/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ru"
-                href="https://example.com/ru/tags/"
+                href="https://a-mitani.github.io/bayes-pyro/ru/tags/"
                 />
   </url>
   
