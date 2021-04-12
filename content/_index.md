@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: 本書について
 type: docs
 ---
 
