@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Pyroで実践するベイズ機械学習</title>
-    <link>https://a-mitani.github.io/bayes-pyro/zh/tags/</link>
+    <link>https://pyro-book.data-hacker.net/zh/tags/</link>
     <description>Recent content in Tags on Pyroで実践するベイズ機械学習</description>
     <generator>Hugo -- gohugo.io</generator>
     
-	<atom:link href="https://a-mitani.github.io/bayes-pyro/zh/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://pyro-book.data-hacker.net/zh/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>

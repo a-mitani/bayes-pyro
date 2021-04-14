@@ -3,59 +3,59 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://a-mitani.github.io/bayes-pyro/ru/categories/</loc>
+    <loc>https://pyro-book.data-hacker.net/ru/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://a-mitani.github.io/bayes-pyro/categories/"
+                href="https://pyro-book.data-hacker.net/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://a-mitani.github.io/bayes-pyro/zh/categories/"
+                href="https://pyro-book.data-hacker.net/zh/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ru"
-                href="https://a-mitani.github.io/bayes-pyro/ru/categories/"
+                href="https://pyro-book.data-hacker.net/ru/categories/"
                 />
   </url>
   
   <url>
-    <loc>https://a-mitani.github.io/bayes-pyro/ru/</loc>
+    <loc>https://pyro-book.data-hacker.net/ru/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://a-mitani.github.io/bayes-pyro/"
+                href="https://pyro-book.data-hacker.net/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://a-mitani.github.io/bayes-pyro/zh/"
+                href="https://pyro-book.data-hacker.net/zh/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ru"
-                href="https://a-mitani.github.io/bayes-pyro/ru/"
+                href="https://pyro-book.data-hacker.net/ru/"
                 />
   </url>
   
   <url>
-    <loc>https://a-mitani.github.io/bayes-pyro/ru/tags/</loc>
+    <loc>https://pyro-book.data-hacker.net/ru/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://a-mitani.github.io/bayes-pyro/tags/"
+                href="https://pyro-book.data-hacker.net/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://a-mitani.github.io/bayes-pyro/zh/tags/"
+                href="https://pyro-book.data-hacker.net/zh/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ru"
-                href="https://a-mitani.github.io/bayes-pyro/ru/tags/"
+                href="https://pyro-book.data-hacker.net/ru/tags/"
                 />
   </url>
   
