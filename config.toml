@@ -8,7 +8,7 @@ canonifyurls = true
 
 # Book configuration
 disablePathToLower = true
-enableGitInfo = true
+enableGitInfo = false
 
 # Needed for mermaid/katex shortcodes
 [markup]
@@ -18,31 +18,11 @@ enableGitInfo = true
 [markup.tableOfContents]
   startLevel = 1
 
-# Multi-lingual mode config
-# There are different options to translate files
-# See https://gohugo.io/content-management/multilingual/#translation-by-filename
-# And https://gohugo.io/content-management/multilingual/#translation-by-content-directory
-[languages]
-[languages.en]
-  languageName = 'English'
-  contentDir = 'content'
-  weight = 1
-
-[languages.ru]
-  languageName = 'Russian'
-  contentDir = 'content.ru'
-  weight = 2
-
-[languages.zh]
-  languageName = 'Chinese'
-  contentDir = 'content.zh'
-  weight = 3
-
 [menu]
 # [[menu.before]]
 [[menu.after]]
   name = "Github"
-  url = "https://github.com/alex-shpak/hugo-book"
+  url = "https://github.com/a-mitani/bayes-pyro"
   weight = 10
 
 [[menu.after]]
@@ -66,7 +46,7 @@ enableGitInfo = true
 
   # (Optional, default none) Set leaf bundle to render as side menu
   # When not specified file structure and weights will be used
-  # BookMenuBundle = '/menu'
+  BookMenuBundle = '/menu'
 
   # (Optional, default docs) Specify root page to render child pages as menu.
   # Page is resoled by .GetPage function: https://gohugo.io/functions/getpage/
@@ -80,7 +60,7 @@ enableGitInfo = true
   # Enable "Edit this page" links for 'doc' page type.
   # Disabled by default. Uncomment to enable. Requires 'BookRepo' param.
   # Edit path must point to root directory of repo.
-  BookEditPath = 'edit/master/exampleSite'
+  #BookEditPath = 'edit/master/exampleSite'
 
   # Configure the date format used on the pages
   # - In git information
