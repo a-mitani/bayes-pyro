@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta name="generator" content="Hugo 0.74.3" />
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="MathJax.Hub.Config({ tex2jax: { inlineMath: [[&#39;$&#39;, &#39;$&#39;] ], displayMath: [ [&#39;$$&#39;,&#39;$$&#39;], [&#34;\\[&#34;,&#34;\\]&#34;] ] } });  ベイズ学習の枠組み #  ■ ベイズ学習は確率分布を学習する #  　ベイズ学習は、「事象（データ）$\mathcal{D}$が観測された」という条件のもとでの未知の変数$\mathbf{w}$の確率分布、すなわち事後確率分布$p(\mathbf{w}|\mathcal{D})$を推論する作業になります。一般的にベイズ学習は以下の２つのStepで行っていくといえます。
+ 確率モデル（生成モデル）の構築：対象とする事象がどのような確率過程を経て生成されたのかをモデル化する。 推論：確率モデルと観測されたデータをもとに事後確率を求める。  それぞれのステップについて少し詳しく見ていきましょう。
+▼ Step1：確率モデル（生成モデル）の構築 #  　まず、着目する事象が確率的なプロセスから発生するものだという仮定を置き、そのプロセスをモデル化することから始めます。確率的な事象を確率変数によって定義し、確率変数の組み合わせで事象を表現していきます。このようなモデルを生成モデルと呼びます。また事象の確率プロセスがモデル化できるとそれはすなわち確率変数間の同時確率分布を定式化することになります。
+例：赤玉白玉問題 #  　赤玉と白玉が入っている袋があり、そこに入っている赤玉と白玉の数の割合$\Theta$は未知とします。そこでこの袋から無作為に玉を取り出した結果$\mathcal{D}$をもとに$\Theta$を推測したいという課題を考えます。
+　この時ベイズ学習では$\Theta$自体を確率変数と考え、観測データ$\mathcal{D}$が得られた時の事後確率分布$p(\Theta | \mathcal{D})$を推論することになりますが、袋から取り出した時の色が決まる過程はどのようにモデル化できるでしょうか？
+　この問題の場合、下図のように①玉の割合は確率分布$p(\Theta)$に従って確率的に決まり②$\Theta$の実現値$\theta$に準じて取り出す玉の色が確率的に決まるというようにモデル化することになります。
+  また同時確率は同時確率と条件付き確率の定義から $$ p(\mathcal{D}, \Theta)=p(\mathcal{D}| \Theta)p(\Theta) $$ と書けることがわかります。
+▼ Step2：推論 #  Step1で確率モデルが構築できたら、そのモデルと観測データから未知のパラメータの確率分布を推論します。これはすなわち冒頭での話のとおり、観測データ$\mathcal{D}$を得た条件下で未知のパラメータがとる条件付き確率$P(\mathbf{w}|\mathcal{D})$を推論することに相当します。 ではこの$P(\mathbf{w}|\mathcal{D})$はどう計算すれば良いのかを考えていきましょう。条件付き確率の定義から $$P(\mathbf{w}|\mathcal{D})=\frac{P(\mathbf{w},\mathcal{D})}{P(\mathcal{D})}=\frac{P(\mathbf{w},\mathcal{D})}{\sum_{\mathbf{w}} P(\mathbf{w},\mathcal{D})}$$ と書き換えられます。 分子の同時確率はStep1の確率モデルの構築ができた時点で定式化されており求めることができるし、分母は未知のパラメータの取りえる値全てに関して同時確率を足し合わす（周辺化する）ことで求められます。
+つまりこの式は、どのような確率モデルの例であっても、同時確率とその未知のパラメータに対する周辺分布を計算することで事後分布$P(W|D)$を推論可能であるということを示していることになります。
+実際の複雑な確率モデルを扱う場合、周辺確率を求めるのに非常にコストがかかるためサンプリングや変分法と呼ばれる近似手法によって事後分布を計算するケースが多いですが、おおもとのベイズ学習の発想は「同時確率とその未知のパラメータに対する周辺分布から事後分布を計算する」ということにあることは覚えておいた方が良いでしょう。
+■ 推論の具体例 #  ここでは手で計算できるレベルの非常に単純なモデルを例に、実際に同時確率とその周辺確率から実際にベイズ推論を行ってみたいと思います。">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://pyro-book.data-hacker.net/docs/bayes_learning_basic/" />
+
+<title>Bayes Learning Basic | Pyroで実践するベイズ機械学習</title>
+<link rel="manifest" href="https://pyro-book.data-hacker.net/manifest.json">
+<link rel="icon" href="https://pyro-book.data-hacker.net/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="https://pyro-book.data-hacker.net/book.min.6c7c6446dfdee7c8c933e9bbc6e80ee3ed6c913b2a59519f2092c3c6a9d63e55.css" integrity="sha256-bHxkRt/e58jJM&#43;m7xugO4&#43;1skTsqWVGfIJLDxqnWPlU=">
+<script defer src="https://pyro-book.data-hacker.net/en.search.min.7aa021fcc598a1096731e0a7fb41ab9e81eaad3a847af1320d15c2d2cceb94a5.js" integrity="sha256-eqAh/MWYoQlnMeCn&#43;0GrnoHqrTqEevEyDRXC0szrlKU="></script>
+
+<script defer src="https://pyro-book.data-hacker.net/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js" integrity="sha256-dKi7B/C&#43;6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ="></script>
+<link rel="alternate" type="application/rss+xml" href="https://pyro-book.data-hacker.net/docs/bayes_learning_basic/index.xml" title="Pyroで実践するベイズ機械学習" />
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a href="https://pyro-book.data-hacker.net/"><span>Pyroで実践するベイズ機械学習</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/what_is_pyro/">Pyroとは</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/pyro_modeling/">Pyroによる確率モデリング</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/bayes_learning_basic/"class=active>ベイズ学習の枠組み</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/vi_basic/">変分推論の基礎</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/pyro_vi/">変分推論を試す</a>
+<br/>
+<br/></li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/a-mitani/bayes-pyro" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="https://pyro-book.data-hacker.net/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Bayes Learning Basic</strong>
+
+  <label for="toc-control">
+    
+    <img src="https://pyro-book.data-hacker.net/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#ベイズ学習の枠組み">ベイズ学習の枠組み</a>
+      <ul>
+        <li><a href="#-ベイズ学習は確率分布を学習する">■ ベイズ学習は確率分布を学習する</a>
+          <ul>
+            <li><a href="#-step1確率モデル生成モデルの構築">▼ Step1：確率モデル（生成モデル）の構築</a></li>
+            <li><a href="#-step2推論">▼ Step2：推論</a></li>
+          </ul>
+        </li>
+        <li><a href="#-推論の具体例">■ 推論の具体例</a>
+          <ul>
+            <li><a href="#ケースa１回の試行で白が出た場合">【ケースA】１回の試行で「白」が出た場合</a></li>
+            <li><a href="#ケースb３回の試行で白赤白が出た場合">【ケースB】３回の試行で「白→赤→白」が出た場合</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<script type="text/x-mathjax-config">
+ MathJax.Hub.Config({
+ tex2jax: {
+ inlineMath: [['$', '$'] ],
+ displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+ }
+ });
+</script>
+<h1 id="ベイズ学習の枠組み">
+  ベイズ学習の枠組み
+  <a class="anchor" href="#%e3%83%99%e3%82%a4%e3%82%ba%e5%ad%a6%e7%bf%92%e3%81%ae%e6%9e%a0%e7%b5%84%e3%81%bf">#</a>
+</h1>
+<h2 id="-ベイズ学習は確率分布を学習する">
+  ■ ベイズ学習は確率分布を学習する
+  <a class="anchor" href="#-%e3%83%99%e3%82%a4%e3%82%ba%e5%ad%a6%e7%bf%92%e3%81%af%e7%a2%ba%e7%8e%87%e5%88%86%e5%b8%83%e3%82%92%e5%ad%a6%e7%bf%92%e3%81%99%e3%82%8b">#</a>
+</h2>
+<p>　ベイズ学習は、「事象（データ）$\mathcal{D}$が観測された」という条件のもとでの未知の変数$\mathbf{w}$の確率分布、すなわち事後確率分布$p(\mathbf{w}|\mathcal{D})$を推論する作業になります。一般的にベイズ学習は以下の２つのStepで行っていくといえます。</p>
+<ol>
+<li><strong>確率モデル（生成モデル）の構築</strong>：対象とする事象がどのような確率過程を経て生成されたのかをモデル化する。</li>
+<li><strong>推論</strong>：確率モデルと観測されたデータをもとに事後確率を求める。</li>
+</ol>
+<p>それぞれのステップについて少し詳しく見ていきましょう。</p>
+<h3 id="-step1確率モデル生成モデルの構築">
+  ▼ Step1：確率モデル（生成モデル）の構築
+  <a class="anchor" href="#-step1%e7%a2%ba%e7%8e%87%e3%83%a2%e3%83%87%e3%83%ab%e7%94%9f%e6%88%90%e3%83%a2%e3%83%87%e3%83%ab%e3%81%ae%e6%a7%8b%e7%af%89">#</a>
+</h3>
+<p>　まず、着目する事象が確率的なプロセスから発生するものだという仮定を置き、そのプロセスをモデル化することから始めます。確率的な事象を確率変数によって定義し、確率変数の組み合わせで事象を表現していきます。このようなモデルを<strong>生成モデル</strong>と呼びます。また事象の確率プロセスがモデル化できるとそれはすなわち確率変数間の同時確率分布を定式化することになります。</p>
+<h4 id="例赤玉白玉問題">
+  例：赤玉白玉問題
+  <a class="anchor" href="#%e4%be%8b%e8%b5%a4%e7%8e%89%e7%99%bd%e7%8e%89%e5%95%8f%e9%a1%8c">#</a>
+</h4>
+<p>　赤玉と白玉が入っている袋があり、そこに入っている赤玉と白玉の数の割合$\Theta$は未知とします。そこでこの袋から無作為に玉を取り出した結果$\mathcal{D}$をもとに$\Theta$を推測したいという課題を考えます。</p>
+<p>　この時ベイズ学習では$\Theta$自体を確率変数と考え、観測データ$\mathcal{D}$が得られた時の事後確率分布$p(\Theta | \mathcal{D})$を推論することになりますが、袋から取り出した時の色が決まる過程はどのようにモデル化できるでしょうか？</p>
+<p>　この問題の場合、下図のように①玉の割合は確率分布$p(\Theta)$に従って確率的に決まり②$\Theta$の実現値$\theta$に準じて取り出す玉の色が確率的に決まるというようにモデル化することになります。</p>
+<center>
+<img src="20210201.001.png" width="300">
+</center>
+<p>また同時確率は同時確率と条件付き確率の定義から
+$$
+p(\mathcal{D}, \Theta)=p(\mathcal{D}| \Theta)p(\Theta)
+$$
+と書けることがわかります。</p>
+<h3 id="-step2推論">
+  ▼ Step2：推論
+  <a class="anchor" href="#-step2%e6%8e%a8%e8%ab%96">#</a>
+</h3>
+<p>Step1で確率モデルが構築できたら、そのモデルと観測データから未知のパラメータの確率分布を推論します。これはすなわち冒頭での話のとおり、観測データ$\mathcal{D}$を得た条件下で未知のパラメータがとる条件付き確率$P(\mathbf{w}|\mathcal{D})$を推論することに相当します。
+ではこの$P(\mathbf{w}|\mathcal{D})$はどう計算すれば良いのかを考えていきましょう。条件付き確率の定義から
+$$P(\mathbf{w}|\mathcal{D})=\frac{P(\mathbf{w},\mathcal{D})}{P(\mathcal{D})}=\frac{P(\mathbf{w},\mathcal{D})}{\sum_{\mathbf{w}} P(\mathbf{w},\mathcal{D})}$$
+と書き換えられます。
+分子の同時確率はStep1の確率モデルの構築ができた時点で定式化されており求めることができるし、分母は未知のパラメータの取りえる値全てに関して同時確率を足し合わす（周辺化する）ことで求められます。</p>
+<p>つまりこの式は、どのような確率モデルの例であっても、同時確率とその未知のパラメータに対する周辺分布を計算することで事後分布$P(W|D)$を推論可能であるということを示していることになります。</p>
+<p>実際の複雑な確率モデルを扱う場合、周辺確率を求めるのに非常にコストがかかるためサンプリングや変分法と呼ばれる近似手法によって事後分布を計算するケースが多いですが、<strong>おおもとのベイズ学習の発想は「同時確率とその未知のパラメータに対する周辺分布から事後分布を計算する」ということにある</strong>ことは覚えておいた方が良いでしょう。</p>
+<h2 id="-推論の具体例">
+  ■ 推論の具体例
+  <a class="anchor" href="#-%e6%8e%a8%e8%ab%96%e3%81%ae%e5%85%b7%e4%bd%93%e4%be%8b">#</a>
+</h2>
+<p>ここでは手で計算できるレベルの非常に単純なモデルを例に、実際に同時確率とその周辺確率から実際にベイズ推論を行ってみたいと思います。</p>
+<p><strong>例：箱の中のボールの数の推論</strong></p>
+<p>ある箱の中にボールが３つ入っている。ボールの色は赤か白のどちらかだが、どの色が何個入っているかはわからない。ここで箱の中からランダムに１つボールを取り出しそのボールの色を確認後箱の中に戻すという操作を行う。
+【ケースA】１回の試行で「白」が出た場合
+【ケースB】３回の試行で「白→赤→白」が出た場合
+の２つの場合で箱の中の白ボールの数がどのように推論できるかを見ていこう。</p>
+<h3 id="ケースa１回の試行で白が出た場合">
+  【ケースA】１回の試行で「白」が出た場合
+  <a class="anchor" href="#%e3%82%b1%e3%83%bc%e3%82%b9a%ef%bc%91%e5%9b%9e%e3%81%ae%e8%a9%a6%e8%a1%8c%e3%81%a7%e7%99%bd%e3%81%8c%e5%87%ba%e3%81%9f%e5%a0%b4%e5%90%88">#</a>
+</h3>
+<p>上のように、確率モデルの構築→推論とステップを踏んで進めていこう。</p>
+<h4 id="確率モデルの構築">
+  確率モデルの構築
+  <a class="anchor" href="#%e7%a2%ba%e7%8e%87%e3%83%a2%e3%83%87%e3%83%ab%e3%81%ae%e6%a7%8b%e7%af%89">#</a>
+</h4>
+<p>この場合の事象は下図のようなグラフィカルモデルで表せる。ここで$W={0, 1, 2, 3}$は白玉の数を示す確率変数で、$W$の値により試行時に取り出される玉の色$X={r, w}$の確率が決まるというモデルになっている。</p>
+<figure>
+    <img src="20210202.001.png"
+         alt="画像2"/> 
+</figure>
+
+<p>また、簡単な確率の考察からそれぞれの確率は下表のようになる。ここで箱の中の玉の数は何の情報もないため等確率で発生するものとして$P_0(W)=1/4$、ここで$W={0,1, 2, 3}$としている。この$P_0(W)$を事前確率という。</p>
+<figure>
+    <img src="20210202.002.png"
+         alt="画像3"/> 
+</figure>
+
+<h4 id="推論">
+  推論
+  <a class="anchor" href="#%e6%8e%a8%e8%ab%96">#</a>
+</h4>
+<p>「１回の試行で白ボールを取り出した」というデータが確定したもとでの白ボールの数を推論したいので、求めたいのは事後確率$P(W|X_1=w)$であり、条件付き確率の定義から
+$$P(W|X_1=w)=\frac{P(W,X_1=w)}{P(X_1=w)}=\frac{P(W,X_1=w)}{\sum_W{P(W, X_1=w)}}\tag{1}$$
+と書ける。上記の最左辺の分子と分母はこれまでの情報で計算できることがわかると思う。それぞれ求めていってみよう。
+分子の同時確率は$P(W, X_1)=P(X_1|W)P(W)$であり、$P(W)_0=P(W)$とすると、
+上の表から以下のように計算できる。
+$$\begin{cases}P(W=0, X_1=w) &amp;= P(X_1=w|W=0)P_0(W=0)= 0 \cdot \frac{1}{4} = 0 \\ P(W=1, X_1=w) &amp;= P(X_1=w|W=1)P_0(W=1)= \frac{1}{3} \cdot \frac{1}{4} = \frac{1}{12} \\ P(W=2, X_1=w) &amp;= P(X_1=w|W=2)P_0(W=2)= \frac{2}{3} \cdot \frac{1}{4} = \frac{1}{6} \\ P(W=3, X_1=w) &amp;= P(X_1=w|W=3)P_0(W=3)= 1 \cdot \frac{1}{4} = \frac{1}{4} \end{cases}$$</p>
+<p>また(1)式の分母である周辺確率は
+$$P(X_1=w)=\sum_{W}P(W, X_1=w) = 0+ \frac{1}{12} + \frac{1}{6} + \frac{1}{4} = \frac{1}{2}$$
+となり、同様に$P(X_1=w)=\frac{1}{2}$となる。</p>
+<p>(1)式にこれらの結果を代入すると
+$$\begin{cases}P(W=0|X_1=w) &amp;= 0 / \frac{1}{2} = 0\\ P(W=1|X_1=w) &amp;= \frac{1}{12} / \frac{1}{2} =\frac{1}{6}\\ P(W=2|X_1=w) &amp;= \frac{1}{6} / \frac{1}{2} =\frac{1}{3}\\ P(W=3|X_1=w) &amp;= \frac{1}{4} / \frac{1}{2} =\frac{1}{2}\\ \end{cases}$$
+となり、１回目に白ボールが出た場合、確率的には箱の中のボールは全部白の可能性が一番高いと推論できることを示している。</p>
+<h3 id="ケースb３回の試行で白赤白が出た場合">
+  【ケースB】３回の試行で「白→赤→白」が出た場合
+  <a class="anchor" href="#%e3%82%b1%e3%83%bc%e3%82%b9b%ef%bc%93%e5%9b%9e%e3%81%ae%e8%a9%a6%e8%a1%8c%e3%81%a7%e7%99%bd%e8%b5%a4%e7%99%bd%e3%81%8c%e5%87%ba%e3%81%9f%e5%a0%b4%e5%90%88">#</a>
+</h3>
+<p>ケースAと同様の考察を繰り返すと良いです。
+要点は、ボールを試行の度に箱に戻すため、Wが決定された状態では、各試行間は独立なので
+$$P(X_1,X_2,X_3)=P(X_1)P(X_2)P(X_3)$$
+となることを利用することにあります。ここで実際の計算は練習問題としておきます。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#ベイズ学習の枠組み">ベイズ学習の枠組み</a>
+      <ul>
+        <li><a href="#-ベイズ学習は確率分布を学習する">■ ベイズ学習は確率分布を学習する</a>
+          <ul>
+            <li><a href="#-step1確率モデル生成モデルの構築">▼ Step1：確率モデル（生成モデル）の構築</a></li>
+            <li><a href="#-step2推論">▼ Step2：推論</a></li>
+          </ul>
+        </li>
+        <li><a href="#-推論の具体例">■ 推論の具体例</a>
+          <ul>
+            <li><a href="#ケースa１回の試行で白が出た場合">【ケースA】１回の試行で「白」が出た場合</a></li>
+            <li><a href="#ケースb３回の試行で白赤白が出た場合">【ケースB】３回の試行で「白→赤→白」が出た場合</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -5,21 +5,21 @@
   <meta name="generator" content="Hugo 0.74.3" />
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Acerbo datus maxime #  Astris ipse furtiva Est in vagis et Pittheus tu arge accipiter regia iram vocatur nurus. Omnes ut olivae sensit arma sorori deducit, inesset crudus, ego vetuere aliis, modo arsit? Utinam rapta fiducia valuere litora adicit cursu, ad facies  Suis quot vota Ea furtique risere fratres edidit terrae magis. Colla tam mihi tenebat: miseram excita suadent es pecudes iam. Concilio quam velatus posset ait quod nunc!">
-<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="本書について" />
+<meta name="description" content="本書について #   Pyroで実践するベイズ機械学習は、Uber AI Labsが中心となって開発を進めている確率的プログラミング言語Pyroを用いてベイズ機械学習を行う方法を解説した入門書です。ベイズ機械学習の基礎からPyroでそれをどのように実装するのかまでを解説していきます。
+本ドキュメントは2021/05/01 現在、制作中です。
+本ドキュメントはオープンなプロジェクトであり、そのため協力者を広く求めています。本書のソースコードは GitHub上で公開されています。
+本書への追記や修正などありましたら、上記GitHubにてIssueの発行、またはPull requestをお願いいたします。
+本ドキュメントは Creative Commons Attribution-ShareAlike 4.0 International License のもとで公開されています。">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Pyroで実践するベイズ機械学習" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://pyro-book.data-hacker.net/" />
 
-<title>本書について | Pyroで実践するベイズ機械学習</title>
+<title>Pyroで実践するベイズ機械学習 | Pyroで実践するベイズ機械学習</title>
 <link rel="manifest" href="https://pyro-book.data-hacker.net/manifest.json">
 <link rel="icon" href="https://pyro-book.data-hacker.net/favicon.png" type="image/x-icon">
-<link rel="alternate" hreflang="ru" href="https://pyro-book.data-hacker.net/ru/" title="Pyroで実践するベイズ機械学習">
-
-<link rel="alternate" hreflang="zh" href="https://pyro-book.data-hacker.net/zh/" title="Pyroで実践するベイズ機械学習">
-
 <link rel="stylesheet" href="https://pyro-book.data-hacker.net/book.min.6c7c6446dfdee7c8c933e9bbc6e80ee3ed6c913b2a59519f2092c3c6a9d63e55.css" integrity="sha256-bHxkRt/e58jJM&#43;m7xugO4&#43;1skTsqWVGfIJLDxqnWPlU=">
-<script defer src="https://pyro-book.data-hacker.net/en.search.min.513a1026701dc68052eb92dd3aee9acc43de7965ace603506c352df46b1a426d.js" integrity="sha256-UToQJnAdxoBS65LdOu6azEPeeWWs5gNQbDUt9GsaQm0="></script>
+<script defer src="https://pyro-book.data-hacker.net/en.search.min.7aa021fcc598a1096731e0a7fb41ab9e81eaad3a847af1320d15c2d2cceb94a5.js" integrity="sha256-eqAh/MWYoQlnMeCn&#43;0GrnoHqrTqEevEyDRXC0szrlKU="></script>
 
 <script defer src="https://pyro-book.data-hacker.net/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js" integrity="sha256-dKi7B/C&#43;6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ="></script>
 <link rel="alternate" type="application/rss+xml" href="https://pyro-book.data-hacker.net/index.xml" title="Pyroで実践するベイズ機械学習" />
@@ -61,304 +61,20 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  
-
-
-
-  
   <ul>
-    
-      
-        <li class="book-section-flat" >
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/example/" class="">Example Site</a>
-  
-
-          
-  <ul>
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/example/table-of-contents/" class="">Table of Contents</a>
-  
-
-          
-  <ul>
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/example/table-of-contents/with-toc/" class="">With ToC</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/example/table-of-contents/without-toc/" class="">Without ToC</a>
-  
-
-        </li>
-      
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <input type="checkbox" id="section-4e46b01272d410b3a99461d79326ddf4" class="toggle"  />
-    <label for="section-4e46b01272d410b3a99461d79326ddf4" class="flex justify-between">
-      <a  class="">Collapsed</a>
-      <span>▾</span>
-    </label>
-  
-
-          
-  <ul>
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/example/collapsed/3rd-level/" class="">3rd Level</a>
-  
-
-          
-  <ul>
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/example/collapsed/3rd-level/4th-level/" class="">4th Level</a>
-  
-
-        </li>
-      
-    
-  </ul>
-
-        </li>
-      
-    
-  </ul>
-
-        </li>
-      
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li class="book-section-flat" >
-          
-  
-  
-
-  
-    <span>Shortcodes</span>
-  
-
-          
-  <ul>
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/buttons/" class="">Buttons</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/columns/" class="">Columns</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/details/" class="">Details</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/expand/" class="">Expand</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/hints/" class="">Hints</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/katex/" class="">Katex</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/mermaid/" class="">Mermaid</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <input type="checkbox" id="section-d3fc1bf6d66cd84b896a0af9f40cb1d5" class="toggle"  />
-    <label for="section-d3fc1bf6d66cd84b896a0af9f40cb1d5" class="flex justify-between">
-      <a href="https://pyro-book.data-hacker.net/docs/shortcodes/section/" class="">Section</a>
-      <span>▾</span>
-    </label>
-  
-
-          
-  <ul>
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/section/page1/" class="">Page1</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/section/page2/" class="">Page2</a>
-  
-
-        </li>
-      
-    
-  </ul>
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="https://pyro-book.data-hacker.net/docs/shortcodes/tabs/" class="">Tabs</a>
-  
-
-        </li>
-      
-    
-  </ul>
-
-        </li>
-      
-    
-  </ul>
-
-
-
-
-
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/what_is_pyro/">Pyroとは</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/pyro_modeling/">Pyroによる確率モデリング</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/bayes_learning_basic/">ベイズ学習の枠組み</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/vi_basic/">変分推論の基礎</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/pyro_vi/">変分推論を試す</a>
+<br/>
+<br/></li>
+</ul>
 
 
 
@@ -369,20 +85,8 @@ https://github.com/alex-shpak/hugo-book
 <ul>
   
   <li>
-    <a href="https://pyro-book.data-hacker.net/posts/" >
-        Blog
-      </a>
-  </li>
-  
-  <li>
-    <a href="https://github.com/alex-shpak/hugo-book" target="_blank" rel="noopener">
+    <a href="https://github.com/a-mitani/bayes-pyro" target="_blank" rel="noopener">
         Github
-      </a>
-  </li>
-  
-  <li>
-    <a href="https://themes.gohugo.io/hugo-book/" target="_blank" rel="noopener">
-        Hugo Themes
       </a>
   </li>
   
@@ -413,7 +117,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="https://pyro-book.data-hacker.net/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>本書について</strong>
+  <strong>Pyroで実践するベイズ機械学習</strong>
 
   <label for="toc-control">
     
@@ -429,12 +133,7 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#acerbo-datus-maxime">Acerbo datus maxime</a>
-      <ul>
-        <li><a href="#tempora-nisi-nunc">Tempora nisi nunc</a></li>
-        <li><a href="#locis-suis-novi-cum-suoque-decidit-eadem">Locis suis novi cum suoque decidit eadem</a></li>
-      </ul>
-    </li>
+    <li><a href="#本書について">本書について</a></li>
   </ul>
 </nav>
 
@@ -447,48 +146,18 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="acerbo-datus-maxime">
-  Acerbo datus maxime
-  <a class="anchor" href="#acerbo-datus-maxime">#</a>
+  <article class="markdown"><h1 id="本書について">
+  本書について
+  <a class="anchor" href="#%e6%9c%ac%e6%9b%b8%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6">#</a>
 </h1>
-<div class="book-columns flex flex-wrap">
-  
-  <div class="flex-even markdown-inner">
-    <h2 id="astris-ipse-furtiva">Astris ipse furtiva</h2>
-<p>Est in vagis et Pittheus tu arge accipiter regia iram vocatur nurus. Omnes ut
-olivae sensit <strong>arma sorori</strong> deducit, inesset <strong>crudus</strong>, ego vetuere aliis,
-modo arsit? Utinam rapta fiducia valuere litora <em>adicit cursu</em>, ad facies
-  </div>
-  
-  <div class="flex-even markdown-inner">
-    <h2 id="suis-quot-vota">Suis quot vota</h2>
-<p>Ea <em>furtique</em> risere fratres edidit terrae magis. Colla tam mihi tenebat:
-miseram excita suadent es pecudes iam. Concilio <em>quam</em> velatus posset ait quod
-nunc! Fragosis suae dextra geruntur functus vulgata.
-  </div>
-  
-</div>
-
-<h2 id="tempora-nisi-nunc">
-  Tempora nisi nunc
-  <a class="anchor" href="#tempora-nisi-nunc">#</a>
-</h2>
-<p>Lorem <strong>markdownum</strong> emicat gestu. Cannis sol pressit ducta. <strong>Est</strong> Idaei,
-tremens ausim se tutaeque, illi ulnis hausit, sed, lumina cutem. Quae avis
-sequens!</p>
-<pre><code>var panel = ram_design;
-if (backup + system) {
-    file.readPoint = network_native;
-    sidebar_engine_device(cell_tftp_raster,
-            dual_login_paper.adf_vci.application_reader_design(
-            graphicsNvramCdma, lpi_footer_snmp, integer_model));
-}
-</code></pre>
-<h2 id="locis-suis-novi-cum-suoque-decidit-eadem">
-  Locis suis novi cum suoque decidit eadem
-  <a class="anchor" href="#locis-suis-novi-cum-suoque-decidit-eadem">#</a>
-</h2>
-<p>Idmoniae ripis, at aves, ali missa adest, ut <em>et autem</em>, et ab?</p>
+<p>
+  <a href="https://pyro-book.data-hacker.net/">Pyroで実践するベイズ機械学習</a>は、Uber AI Labsが中心となって開発を進めている確率的プログラミング言語Pyroを用いてベイズ機械学習を行う方法を解説した入門書です。ベイズ機械学習の基礎からPyroでそれをどのように実装するのかまでを解説していきます。</p>
+<p>本ドキュメントは2021/05/01 現在、制作中です。</p>
+<p>本ドキュメントはオープンなプロジェクトであり、そのため協力者を広く求めています。本書のソースコードは
+  <a href="https://github.com/a-mitani/bayes-pyro">GitHub</a>上で公開されています。</p>
+<p>本書への追記や修正などありましたら、上記GitHubにてIssueの発行、またはPull requestをお願いいたします。</p>
+<p>本ドキュメントは 
+  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en">Creative Commons Attribution-ShareAlike 4.0 International License</a> のもとで公開されています。</p>
 </article>
  
       
@@ -497,75 +166,9 @@ if (backup + system) {
         
   <div class="flex flex-wrap justify-between">
 
-  
 
 
 
-  
-    
-  
-    
-  
-    
-  
-
-
-  
-
-  
-
-
-<div class="book-languages" tabindex="0" aria-haspopup="true">
-  <ul>
-    <li class="flex align-center">
-      <img src="https://pyro-book.data-hacker.net/svg/translate.svg" class="book-icon" alt="Languages" />
-      English
-    </li> 
-  </ul>
-
-  <ul class="book-languages-list">
-    
-    <li class="active">
-      <a href="https://pyro-book.data-hacker.net/" class="flex align-center">
-        <img src="https://pyro-book.data-hacker.net/svg/translate.svg" class="book-icon" alt="Languages" />
-        English
-      </a>
-    </li>
-    
-    <li class="">
-      <a href="https://pyro-book.data-hacker.net/ru/" class="flex align-center">
-        <img src="https://pyro-book.data-hacker.net/svg/translate.svg" class="book-icon" alt="Languages" />
-        Russian
-      </a>
-    </li>
-    
-    <li class="">
-      <a href="https://pyro-book.data-hacker.net/zh/" class="flex align-center">
-        <img src="https://pyro-book.data-hacker.net/svg/translate.svg" class="book-icon" alt="Languages" />
-        Chinese
-      </a>
-    </li>
-    
-  </ul>
-</div>
-
-
-
-
-  <div><a class="flex align-center" href="https://github.com/alex-shpak/hugo-book/commit/1dc47ed66fcf7f6699afcbaf9d239b2073fc697e" title='Last modified by a-mitani | April 13, 2021' target="_blank" rel="noopener">
-      <img src="https://pyro-book.data-hacker.net/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>April 13, 2021</span>
-    </a>
-  </div>
-
-
-
-  <div>
-    <a class="flex align-center" href="https://github.com/alex-shpak/hugo-book/edit/master/exampleSite/content/_index.md" target="_blank" rel="noopener">
-      <img src="https://pyro-book.data-hacker.net/svg/edit.svg" class="book-icon" alt="Edit" />
-      <span>Edit this page</span>
-    </a>
-  </div>
 
 </div>
 
@@ -591,12 +194,7 @@ if (backup + system) {
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#acerbo-datus-maxime">Acerbo datus maxime</a>
-      <ul>
-        <li><a href="#tempora-nisi-nunc">Tempora nisi nunc</a></li>
-        <li><a href="#locis-suis-novi-cum-suoque-decidit-eadem">Locis suis novi cum suoque decidit eadem</a></li>
-      </ul>
-    </li>
+    <li><a href="#本書について">本書について</a></li>
   </ul>
 </nav>
 

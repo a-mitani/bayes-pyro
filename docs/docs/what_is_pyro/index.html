@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta name="generator" content="Hugo 0.74.3" />
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Pyroとは #   PyroはUber AI labにより開発されている、オープンソースの確率的プログラミング言語(Probablistic Programing Language: PPL)です1。Python上で動作し、Pythonのコードを実装する要領で、確率変数やそれらを組み合わせた独自の確率モデルを構築することを可能にしてくれます。
+また同時に確率モデルの推論を行うための多くのアルゴリズムが実装されており、本書のメイントピックであるベイズ機械学習（以降、ベイズ学習）を非常にシンプルな形で実装することが可能になります。特に変分推論においては学習時に最大化していく対象であるELBO(Evidence Lower Bound)をユーザーが構築した独自の確率モデルに従って自動で計算する機能を備えており、Pyroを用いると変分推論の実装が非常に容易になります2。このような機能により深層学習とベイズ学習を組み合わせた深層ベイズ学習などの実装も非常に容易になります。
+Pyroはそのバックエンドに深層学習フレームワークの Pytorchを利用しているため、Pytorchのもつ自動微分(autograd)機能やGPU計算機能を利用することで高速な学習が可能になっているところに特徴があります。
+Pyroのインストール #  ローカル環境へのPyroのインストール #  自身のローカル環境でPyroを利用する場合、まずは、まず Pytorchをインストールする必要があります。Pytorchをインストール後、
+pip install pyro-ppl コマンドによりPyroのインストールします。
+Google ColabratoryでのPyroのインストール #  以降の本書のサンプルコードは全て Google Colabratory上で動作させることを前提としています。ColabratoryはPytorchは事前にインストールされているため、下記の「!」を冒頭につけたpipコマンドをセル上で動かすだけででPyroをインストールすることが可能です。
+!pip install pyro-ppl 次節以降で、ベイズ学習の基礎とPyroを用いた実装方法を学んでいきます。
+  「プログラミング言語」と名乗ってはいますが、Pythonで動作するライブラリの位置付けなので、確率的プログラミングをするための「フレームワーク」と考えた方がわかりやすいかもしれません。 &#x21a9;&#xfe0e;
+ これは言うなれば深層学習においてTensorflowやPytorchがユーザーが独自に構築したニューラルネットワークの損失関数の勾配を自動で計算してくれることに対応していると考えれば、この機能の便利さが容易に想像できます。 &#x21a9;&#xfe0e;
+   ">
+<meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Pyroとは" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://pyro-book.data-hacker.net/docs/what_is_pyro/" />
+
+<title>Pyroとは | Pyroで実践するベイズ機械学習</title>
+<link rel="manifest" href="https://pyro-book.data-hacker.net/manifest.json">
+<link rel="icon" href="https://pyro-book.data-hacker.net/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="https://pyro-book.data-hacker.net/book.min.6c7c6446dfdee7c8c933e9bbc6e80ee3ed6c913b2a59519f2092c3c6a9d63e55.css" integrity="sha256-bHxkRt/e58jJM&#43;m7xugO4&#43;1skTsqWVGfIJLDxqnWPlU=">
+<script defer src="https://pyro-book.data-hacker.net/en.search.min.7aa021fcc598a1096731e0a7fb41ab9e81eaad3a847af1320d15c2d2cceb94a5.js" integrity="sha256-eqAh/MWYoQlnMeCn&#43;0GrnoHqrTqEevEyDRXC0szrlKU="></script>
+
+<script defer src="https://pyro-book.data-hacker.net/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js" integrity="sha256-dKi7B/C&#43;6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ="></script>
+<link rel="alternate" type="application/rss+xml" href="https://pyro-book.data-hacker.net/docs/what_is_pyro/index.xml" title="Pyroで実践するベイズ機械学習" />
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a href="https://pyro-book.data-hacker.net/"><span>Pyroで実践するベイズ機械学習</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/what_is_pyro/"class=active>Pyroとは</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/pyro_modeling/">Pyroによる確率モデリング</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/bayes_learning_basic/">ベイズ学習の枠組み</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/vi_basic/">変分推論の基礎</a></li>
+<li>
+  <a href="https://pyro-book.data-hacker.net/docs/pyro_vi/">変分推論を試す</a>
+<br/>
+<br/></li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/a-mitani/bayes-pyro" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="https://pyro-book.data-hacker.net/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Pyroとは</strong>
+
+  <label for="toc-control">
+    
+    <img src="https://pyro-book.data-hacker.net/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#pyroとは">Pyroとは</a></li>
+    <li><a href="#pyroのインストール">Pyroのインストール</a>
+      <ul>
+        <li><a href="#ローカル環境へのpyroのインストール">ローカル環境へのPyroのインストール</a></li>
+        <li><a href="#google-colabratoryでのpyroのインストール">Google ColabratoryでのPyroのインストール</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="pyroとは">
+  Pyroとは
+  <a class="anchor" href="#pyro%e3%81%a8%e3%81%af">#</a>
+</h1>
+<p>
+  <a href="https://pyro.ai/">Pyro</a>はUber AI labにより開発されている、オープンソースの確率的プログラミング言語(Probablistic Programing Language: PPL)です<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。Python上で動作し、Pythonのコードを実装する要領で、確率変数やそれらを組み合わせた独自の確率モデルを構築することを可能にしてくれます。</p>
+<p>また同時に確率モデルの推論を行うための多くのアルゴリズムが実装されており、本書のメイントピックであるベイズ機械学習（以降、ベイズ学習）を非常にシンプルな形で実装することが可能になります。特に変分推論においては学習時に最大化していく対象であるELBO(Evidence Lower Bound)をユーザーが構築した独自の確率モデルに従って自動で計算する機能を備えており、Pyroを用いると変分推論の実装が非常に容易になります<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>。このような機能により深層学習とベイズ学習を組み合わせた深層ベイズ学習などの実装も非常に容易になります。</p>
+<p>Pyroはそのバックエンドに深層学習フレームワークの
+  <a href="https://pytorch.org/">Pytorch</a>を利用しているため、Pytorchのもつ自動微分(autograd)機能やGPU計算機能を利用することで高速な学習が可能になっているところに特徴があります。</p>
+<h1 id="pyroのインストール">
+  Pyroのインストール
+  <a class="anchor" href="#pyro%e3%81%ae%e3%82%a4%e3%83%b3%e3%82%b9%e3%83%88%e3%83%bc%e3%83%ab">#</a>
+</h1>
+<h2 id="ローカル環境へのpyroのインストール">
+  ローカル環境へのPyroのインストール
+  <a class="anchor" href="#%e3%83%ad%e3%83%bc%e3%82%ab%e3%83%ab%e7%92%b0%e5%a2%83%e3%81%b8%e3%81%aepyro%e3%81%ae%e3%82%a4%e3%83%b3%e3%82%b9%e3%83%88%e3%83%bc%e3%83%ab">#</a>
+</h2>
+<p>自身のローカル環境でPyroを利用する場合、まずは、まず
+  <a href="https://pytorch.org/get-started/locally/">Pytorchをインストール</a>する必要があります。Pytorchをインストール後、</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">pip install pyro<span style="color:#f92672">-</span>ppl
+</code></pre></div><p>コマンドによりPyroのインストールします。</p>
+<h2 id="google-colabratoryでのpyroのインストール">
+  Google ColabratoryでのPyroのインストール
+  <a class="anchor" href="#google-colabratory%e3%81%a7%e3%81%aepyro%e3%81%ae%e3%82%a4%e3%83%b3%e3%82%b9%e3%83%88%e3%83%bc%e3%83%ab">#</a>
+</h2>
+<p>以降の本書のサンプルコードは全て
+  <a href="https://colab.research.google.com/notebooks/welcome.ipynb?hl=ja">Google Colabratory</a>上で動作させることを前提としています。ColabratoryはPytorchは事前にインストールされているため、下記の「!」を冒頭につけたpipコマンドをセル上で動かすだけででPyroをインストールすることが可能です。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#960050;background-color:#1e0010">!</span>pip install pyro<span style="color:#f92672">-</span>ppl
+</code></pre></div><p>次節以降で、ベイズ学習の基礎とPyroを用いた実装方法を学んでいきます。</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>「プログラミング言語」と名乗ってはいますが、Pythonで動作するライブラリの位置付けなので、確率的プログラミングをするための「フレームワーク」と考えた方がわかりやすいかもしれません。 <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>これは言うなれば深層学習においてTensorflowやPytorchがユーザーが独自に構築したニューラルネットワークの損失関数の勾配を自動で計算してくれることに対応していると考えれば、この機能の便利さが容易に想像できます。 <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#pyroとは">Pyroとは</a></li>
+    <li><a href="#pyroのインストール">Pyroのインストール</a>
+      <ul>
+        <li><a href="#ローカル環境へのpyroのインストール">ローカル環境へのPyroのインストール</a></li>
+        <li><a href="#google-colabratoryでのpyroのインストール">Google ColabratoryでのPyroのインストール</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

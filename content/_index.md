@@ -1,41 +1,15 @@
 ---
-title: 本書について
+title: Pyroで実践するベイズ機械学習
 type: docs
 ---
+# 本書について
 
-# Acerbo datus maxime
+[Pyroで実践するベイズ機械学習](https://pyro-book.data-hacker.net/)は、Uber AI Labsが中心となって開発を進めている確率的プログラミング言語Pyroを用いてベイズ機械学習を行う方法を解説した入門書です。ベイズ機械学習の基礎からPyroでそれをどのように実装するのかまでを解説していきます。
 
-{{< columns >}}
-## Astris ipse furtiva
+本ドキュメントは2021/05/01 現在、制作中です。
 
-Est in vagis et Pittheus tu arge accipiter regia iram vocatur nurus. Omnes ut
-olivae sensit **arma sorori** deducit, inesset **crudus**, ego vetuere aliis,
-modo arsit? Utinam rapta fiducia valuere litora _adicit cursu_, ad facies
+本ドキュメントはオープンなプロジェクトであり、そのため協力者を広く求めています。本書のソースコードは[GitHub](https://github.com/a-mitani/bayes-pyro)上で公開されています。
 
-<--->
+本書への追記や修正などありましたら、上記GitHubにてIssueの発行、またはPull requestをお願いいたします。
 
-## Suis quot vota
-
-Ea _furtique_ risere fratres edidit terrae magis. Colla tam mihi tenebat:
-miseram excita suadent es pecudes iam. Concilio _quam_ velatus posset ait quod
-nunc! Fragosis suae dextra geruntur functus vulgata.
-{{< /columns >}}
-
-
-## Tempora nisi nunc
-
-Lorem **markdownum** emicat gestu. Cannis sol pressit ducta. **Est** Idaei,
-tremens ausim se tutaeque, illi ulnis hausit, sed, lumina cutem. Quae avis
-sequens!
-
-    var panel = ram_design;
-    if (backup + system) {
-        file.readPoint = network_native;
-        sidebar_engine_device(cell_tftp_raster,
-                dual_login_paper.adf_vci.application_reader_design(
-                graphicsNvramCdma, lpi_footer_snmp, integer_model));
-    }
-
-## Locis suis novi cum suoque decidit eadem
-
-Idmoniae ripis, at aves, ali missa adest, ut _et autem_, et ab?
+本ドキュメントは [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/deed.en) のもとで公開されています。
