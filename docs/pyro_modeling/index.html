@@ -1,0 +1,100 @@
+<!doctype html><html lang=en dir=ltr><head><meta name=generator content="Hugo 0.79.1"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'] ], displayMath: [ ['$$','$$'], [&#34;\\[&#34;,&#34;\\]&#34;] ] } });  Pyroによる確率モデリング #  前節で「Pyroにより確率変数やそれらを組み合わせた確率モデルを容易に扱うことが可能になる」ことを述べました。ここでは以下のような簡単な例をとおして、Pyroで確率変数をどのように扱うのか、確率モデルをどのように定義するのかなどを見ていきたいと思います。
+確率プリミティブ #  確率モデルは確率的にアウトプットが変動する「確率変数」から構成されます。
+例えばベルヌーイ分布に従う確率変数$x$を考える時、Pyroでは$x$を
+import pyro x = pyro.sample(&#34;x&#34;, dist.Bernoulli(0.5)) のように宣言します。ここでpyro.sampleの第一引数は確率変数の名前を指定しており、のちに行う推論などではこの名前を確率変数のIDとして処理を行います（そのために一意に命名する必要があります。）。また第二引数は確率変数$x$の従う確率分布であり、ここでの例では1と0が等確率に出現するp=0.5のベルヌーイ分布を指定しています。
+pyro.sample関数は指定された確率分布にしたがって値をサンプリングする関数となっており、以下の例で確率分布からサンプリングされている様子が確認することができます。
+for _ in range(5): x = pyro.sample(&#34;x&#34;, dist.Bernoulli(0.5)) print(x) ## output # tensor(1.) # tensor(1.) # tensor(0.) # tensor(1.) # tensor(0.) 簡単なモデルの例 #  確率プリミティブを用いて簡単な確率モデルをPyroで定義する例をみてみましょう。ここでは以下のような例を考えます。
+例:赤玉白玉問題 下図のように、２つの袋$a$および$b$があり、袋$a$には赤玉が2個、白玉が1個入っており、袋$b$には赤玉が1個、白玉が3個入っているものとします。ここで、２つの袋のうち一方の袋を等確率にランダムに選び、その選んだ袋から玉を１つ取り出す試行を行います。
+  ここで「袋が選ばれる」「玉が取り出される」という確率的な過程をそれぞれ確率変数$x$、$y$とすると上の試行は下記のグラフィカルモデルのように記述出来ます。   Pyroでは確率モデルを確率プリミティブの演算の組み合わせで構成されたPython関数として定義します。上の確率モデルであれば下記のball_modelのように定義することができます。このように観測値（今回の場合は取り出した玉の色）がどのような確率過程で生み出されたのかを記述するようなモデルを生成モデルと呼びます。
+import pyro import pyro.distributions as dist # x=1: 袋a, x=0: 袋b # y=1: 赤玉, y=0:　白玉 def ball_model(): x = pyro."><meta name=theme-color content="#FFFFFF"><meta property="og:title" content><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://pyro-book.data-hacker.net/docs/pyro_modeling/"><title>Pyro Modeling | Pyroで実践するベイズ機械学習</title><link rel=manifest href=https://pyro-book.data-hacker.net/manifest.json><link rel=icon href=https://pyro-book.data-hacker.net/favicon.png type=image/x-icon><link rel=stylesheet href=https://pyro-book.data-hacker.net/book.min.6c7c6446dfdee7c8c933e9bbc6e80ee3ed6c913b2a59519f2092c3c6a9d63e55.css integrity="sha256-bHxkRt/e58jJM+m7xugO4+1skTsqWVGfIJLDxqnWPlU="><script defer src=https://pyro-book.data-hacker.net/en.search.min.7aa021fcc598a1096731e0a7fb41ab9e81eaad3a847af1320d15c2d2cceb94a5.js integrity="sha256-eqAh/MWYoQlnMeCn+0GrnoHqrTqEevEyDRXC0szrlKU="></script><script defer src=https://pyro-book.data-hacker.net/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js integrity="sha256-dKi7B/C+6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ="></script><link rel=alternate type=application/rss+xml href=https://pyro-book.data-hacker.net/docs/pyro_modeling/index.xml title=Pyroで実践するベイズ機械学習></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a href=https://pyro-book.data-hacker.net/><span>Pyroで実践するベイズ機械学習</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=https://pyro-book.data-hacker.net/docs/what_is_pyro/>Pyroとは</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_modeling/ class=active>Pyroによる確率モデリング</a></li><li><a href=https://pyro-book.data-hacker.net/docs/bayes_learning_basic/>ベイズ学習の枠組み</a></li><li><a href=https://pyro-book.data-hacker.net/docs/vi_basic/>変分推論の基礎</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_vi/>変分推論を試す</a><br><br></li></ul><ul><li><a href=https://github.com/a-mitani/bayes-pyro target=_blank rel=noopener>Github</a></li></ul></nav><script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=https://pyro-book.data-hacker.net/svg/menu.svg class=book-icon alt=Menu></label>
+<strong>Pyro Modeling</strong>
+<label for=toc-control><img src=https://pyro-book.data-hacker.net/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#pyroによる確率モデリング>Pyroによる確率モデリング</a><ul><li><a href=#確率プリミティブ>確率プリミティブ</a></li><li><a href=#簡単なモデルの例>簡単なモデルの例</a></li><li><a href=#モデル内部状態の把握>モデル内部状態の把握</a></li><li><a href=#複雑な確率モデル>複雑な確率モデル</a></li><li><a href=#ベイズ学習へ>ベイズ学習へ</a></li></ul></li></ul></nav></aside></header><article class=markdown><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type=text/x-mathjax-config>
+ MathJax.Hub.Config({
+ tex2jax: {
+ inlineMath: [['$', '$'] ],
+ displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+ }
+ });
+</script><h1 id=pyroによる確率モデリング>Pyroによる確率モデリング
+<a class=anchor href=#pyro%e3%81%ab%e3%82%88%e3%82%8b%e7%a2%ba%e7%8e%87%e3%83%a2%e3%83%87%e3%83%aa%e3%83%b3%e3%82%b0>#</a></h1><p>前節で「Pyroにより確率変数やそれらを組み合わせた確率モデルを容易に扱うことが可能になる」ことを述べました。ここでは以下のような簡単な例をとおして、Pyroで確率変数をどのように扱うのか、確率モデルをどのように定義するのかなどを見ていきたいと思います。</p><h2 id=確率プリミティブ>確率プリミティブ
+<a class=anchor href=#%e7%a2%ba%e7%8e%87%e3%83%97%e3%83%aa%e3%83%9f%e3%83%86%e3%82%a3%e3%83%96>#</a></h2><p>確率モデルは確率的にアウトプットが変動する「確率変数」から構成されます。</p><p>例えばベルヌーイ分布に従う確率変数$x$を考える時、Pyroでは$x$を</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> pyro
+x <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;x&#34;</span>, dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>0.5</span>))
+</code></pre></div><p>のように宣言します。ここで<code>pyro.sample</code>の第一引数は確率変数の名前を指定しており、のちに行う推論などではこの名前を確率変数のIDとして処理を行います（そのために一意に命名する必要があります。）。また第二引数は確率変数$x$の従う確率分布であり、ここでの例では1と0が等確率に出現する<code>p=0.5</code>のベルヌーイ分布を指定しています。</p><p><code>pyro.sample</code>関数は指定された確率分布にしたがって値をサンプリングする関数となっており、以下の例で確率分布からサンプリングされている様子が確認することができます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>5</span>):
+    x <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;x&#34;</span>, dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>0.5</span>))
+    <span style=color:#66d9ef>print</span>(x)
+<span style=color:#75715e>## output</span>
+<span style=color:#75715e># tensor(1.)</span>
+<span style=color:#75715e># tensor(1.)</span>
+<span style=color:#75715e># tensor(0.)</span>
+<span style=color:#75715e># tensor(1.)</span>
+<span style=color:#75715e># tensor(0.)</span>
+</code></pre></div><h2 id=簡単なモデルの例>簡単なモデルの例
+<a class=anchor href=#%e7%b0%a1%e5%8d%98%e3%81%aa%e3%83%a2%e3%83%87%e3%83%ab%e3%81%ae%e4%be%8b>#</a></h2><p>確率プリミティブを用いて簡単な確率モデルをPyroで定義する例をみてみましょう。ここでは以下のような例を考えます。</p><p><strong>例:赤玉白玉問題</strong> 下図のように、２つの袋$a$および$b$があり、袋$a$には赤玉が2個、白玉が1個入っており、袋$b$には赤玉が1個、白玉が3個入っているものとします。ここで、２つの袋のうち一方の袋を等確率にランダムに選び、その選んだ袋から玉を１つ取り出す試行を行います。</p><center><img src=ball.001.png width=300></center>
+ここで「袋が選ばれる」「玉が取り出される」という確率的な過程をそれぞれ確率変数$x$、$y$とすると上の試行は下記のグラフィカルモデルのように記述出来ます。
+<center><img src=ball.002.png width=300></center><p>Pyroでは確率モデルを確率プリミティブの演算の組み合わせで構成された<strong>Python関数として定義</strong>します。上の確率モデルであれば下記の<code>ball_model</code>のように定義することができます。このように観測値（今回の場合は取り出した玉の色）がどのような確率過程で生み出されたのかを記述するようなモデルを<strong>生成モデル</strong>と呼びます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> pyro
+<span style=color:#f92672>import</span> pyro.distributions <span style=color:#f92672>as</span> dist
+
+<span style=color:#75715e># x=1: 袋a,  x=0: 袋b</span>
+<span style=color:#75715e># y=1: 赤玉, y=0:　白玉</span>
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>ball_model</span>():
+    x <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;x&#34;</span>, dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>0.5</span>))
+    <span style=color:#66d9ef>if</span> x:  
+        y <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;y&#34;</span>, dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>2.0</span><span style=color:#f92672>/</span><span style=color:#ae81ff>3.0</span>))
+    <span style=color:#66d9ef>else</span>: 
+        y <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;y&#34;</span>, dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>1.0</span><span style=color:#f92672>/</span><span style=color:#ae81ff>4.0</span>))
+    <span style=color:#66d9ef>return</span> y
+</code></pre></div><p>7行目で<code>x</code>としてどちらかの袋を等確率に選ぶため<code>p=0.5</code>のベルヌーイ分布を指定しています。変数<code>x</code>は1(袋a）か0（袋b）を出力しますが、その出力値に応じてそれぞれの袋の中の赤玉と白玉の数に合わせてベルヌーイ分布で赤玉白玉が選択されるように実装されているのがわかります。</p><p>確率プリミティブの組み合わせで構成された<code>ball_model</code>の関数もやはり確率的な挙動を示す確率的関数として動作し、下記のコード例のように、関数が呼ばれたらその関数内で定義されたモデルに従って値をサンプリングする動作をします。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>5</span>):
+    <span style=color:#66d9ef>print</span>(ball_model())
+<span style=color:#75715e>## output</span>
+<span style=color:#75715e># tensor(0.)</span>
+<span style=color:#75715e># tensor(0.)</span>
+<span style=color:#75715e># tensor(1.)</span>
+<span style=color:#75715e># tensor(0.)</span>
+<span style=color:#75715e># tensor(1.)</span>
+</code></pre></div><h2 id=モデル内部状態の把握>モデル内部状態の把握
+<a class=anchor href=#%e3%83%a2%e3%83%87%e3%83%ab%e5%86%85%e9%83%a8%e7%8a%b6%e6%85%8b%e3%81%ae%e6%8a%8a%e6%8f%a1>#</a></h2><p>ここまでで、確率モデルをPythonの関数として実装し、それを呼ぶことで確率モデルに従った最終的な実現値をサンプリングすることができました。推論などを行う際には実現値を出力するに至るまでにそのモデルの内部の確率変数がどういう値を取ったのかを知りたい場合が多くあります。Pyroでは<code>trace</code>を用いることでそのサンプリング過程をトレースすることが可能になります。</p><p>下のコードは<code>ball_model</code>をサンプリングしその時の内部状態を出力しています。
+この出力内容を見ると、<code>ball_model</code>には関数内で明示的に定義した<code>'x'</code>, <code>'y'</code>の他に<code>'_INPUT'</code>、<code>'_RETURN'</code>というノードも存在することがわかります。また今回のモデルの実現値は内部のそれぞれの確率変数の実現値（<code>value</code>）が<code>'x'=tensor(0.)</code>、<code>'y'=tensor(1.)</code>となることでモデルの最終的な出力<code>'_RETURN'</code>の実現値が<code>tensor(1.)</code>となっていることが窺い知ることができます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>from</span> pyro.poutine <span style=color:#f92672>import</span> trace
+
+tr <span style=color:#f92672>=</span> trace(ball_model)<span style=color:#f92672>.</span>get_trace()
+<span style=color:#66d9ef>for</span> tr_items <span style=color:#f92672>in</span> tr<span style=color:#f92672>.</span>nodes<span style=color:#f92672>.</span>items():
+    <span style=color:#66d9ef>print</span>(tr_items)
+<span style=color:#75715e># output</span>
+<span style=color:#75715e># (&#39;_INPUT&#39;, {&#39;name&#39;: &#39;_INPUT&#39;, &#39;type&#39;: &#39;args&#39;, &#39;args&#39;: (), &#39;kwargs&#39;: {}})</span>
+<span style=color:#75715e>#(&#39;x&#39;, {&#39;type&#39;: &#39;sample&#39;, &#39;name&#39;: &#39;x&#39;, &#39;fn&#39;: Bernoulli(probs: 0.5), &#39;is_observed&#39;: False, &#39;args&#39;: (), &#39;kwargs&#39;: {}, &#39;value&#39;: tensor(0.), &#39;infer&#39;: {}, &#39;scale&#39;: 1.0, &#39;mask&#39;: None, &#39;cond_indep_stack&#39;: (), &#39;done&#39;: True, &#39;stop&#39;: False, &#39;continuation&#39;: None})</span>
+<span style=color:#75715e># (&#39;y&#39;, {&#39;type&#39;: &#39;sample&#39;, &#39;name&#39;: &#39;y&#39;, &#39;fn&#39;: Bernoulli(probs: 0.25), &#39;is_observed&#39;: False, &#39;args&#39;: (), &#39;kwargs&#39;: {}, &#39;value&#39;: tensor(1.), &#39;infer&#39;: {}, &#39;scale&#39;: 1.0, &#39;mask&#39;: None, &#39;cond_indep_stack&#39;: (), &#39;done&#39;: True, &#39;stop&#39;: False, &#39;continuation&#39;: None})</span>
+<span style=color:#75715e># (&#39;_RETURN&#39;, {&#39;name&#39;: &#39;_RETURN&#39;, &#39;type&#39;: &#39;return&#39;, &#39;value&#39;: tensor(1.)})</span>
+</code></pre></div><p>また下記のコードのように<code>condition</code>を用いて各確率変数の実現値を固定してトレースすることで確率モデルの同時確率を求めることも可能です。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>from</span> pyro <span style=color:#f92672>import</span> condition
+
+cond_model <span style=color:#f92672>=</span> condition(ball_model, {
+    <span style=color:#e6db74>&#34;x&#34;</span>: tensor(<span style=color:#ae81ff>1.</span>),
+    <span style=color:#e6db74>&#34;y&#34;</span>: tensor(<span style=color:#ae81ff>1.</span>)
+})
+
+tr <span style=color:#f92672>=</span> trace(cond_model)<span style=color:#f92672>.</span>get_trace()
+<span style=color:#66d9ef>for</span> tr_items <span style=color:#f92672>in</span> tr<span style=color:#f92672>.</span>nodes<span style=color:#f92672>.</span>items():
+    <span style=color:#66d9ef>print</span>(tr_items)
+
+<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#39;p(x=1, y=1) =&#39;</span>,  tr<span style=color:#f92672>.</span>log_prob_sum()<span style=color:#f92672>.</span>exp()<span style=color:#f92672>.</span>item())
+<span style=color:#75715e>### output</span>
+<span style=color:#75715e># (&#39;_INPUT&#39;, {&#39;name&#39;: &#39;_INPUT&#39;, &#39;type&#39;: &#39;args&#39;, &#39;args&#39;: (), &#39;kwargs&#39;: {}})</span>
+<span style=color:#75715e># (&#39;x&#39;, {&#39;type&#39;: &#39;sample&#39;, &#39;name&#39;: &#39;x&#39;, &#39;fn&#39;: Bernoulli(probs: 0.5), &#39;is_observed&#39;: True, &#39;args&#39;: (), &#39;kwargs&#39;: {}, &#39;value&#39;: tensor(1.), &#39;infer&#39;: {}, &#39;scale&#39;: 1.0, &#39;mask&#39;: None, &#39;cond_indep_stack&#39;: (), &#39;done&#39;: True, &#39;stop&#39;: False, &#39;continuation&#39;: None})</span>
+<span style=color:#75715e># (&#39;y&#39;, {&#39;type&#39;: &#39;sample&#39;, &#39;name&#39;: &#39;y&#39;, &#39;fn&#39;: Bernoulli(probs: 0.6666666865348816), &#39;is_observed&#39;: True, &#39;args&#39;: (), &#39;kwargs&#39;: {}, &#39;value&#39;: tensor(1.), &#39;infer&#39;: {}, &#39;scale&#39;: 1.0, &#39;mask&#39;: None, &#39;cond_indep_stack&#39;: (), &#39;done&#39;: True, &#39;stop&#39;: False, &#39;continuation&#39;: None})</span>
+<span style=color:#75715e># (&#39;_RETURN&#39;, {&#39;name&#39;: &#39;_RETURN&#39;, &#39;type&#39;: &#39;return&#39;, &#39;value&#39;: tensor(1.)})</span>
+<span style=color:#75715e># p(x=1, y=1) = 0.3333333134651184</span>
+</code></pre></div><h2 id=複雑な確率モデル>複雑な確率モデル
+<a class=anchor href=#%e8%a4%87%e9%9b%91%e3%81%aa%e7%a2%ba%e7%8e%87%e3%83%a2%e3%83%87%e3%83%ab>#</a></h2><p>確率モデルをPythonの関数の形でかけるということは様々なメリットがあります。下記のコード例のように確率モデルに引数を渡したり、再帰的な確率モデルを構築することも容易ですし、関数同士を組み合わせることも可能です。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>geometric</span>(p, t<span style=color:#f92672>=</span>None):
+    <span style=color:#66d9ef>if</span> t <span style=color:#f92672>is</span> None:
+        t <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>
+    x <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;x_{}&#34;</span><span style=color:#f92672>.</span>format(t), pyro<span style=color:#f92672>.</span>distributions<span style=color:#f92672>.</span>Bernoulli(p))
+    <span style=color:#66d9ef>if</span> x<span style=color:#f92672>.</span>item() <span style=color:#f92672>==</span> <span style=color:#ae81ff>1</span>:
+        <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>
+    <span style=color:#66d9ef>else</span>:
+        <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>+</span> geometric(p, t <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>)
+
+<span style=color:#66d9ef>print</span>(geometric(<span style=color:#ae81ff>0.5</span>))
+
+<span style=color:#75715e>## output</span>
+<span style=color:#75715e># 0</span>
+</code></pre></div><h2 id=ベイズ学習へ>ベイズ学習へ
+<a class=anchor href=#%e3%83%99%e3%82%a4%e3%82%ba%e5%ad%a6%e7%bf%92%e3%81%b8>#</a></h2><p>ここまででPyroを用いて対象の事象に合わせた確率モデル、いわゆる生成モデルを定義することを行ってきました。ベイズ学習ではこの確率モデルに観測されたデータを組み合わせることで、未知のパラメータを学習・推論することになります。例えば、前述の赤玉白玉問題の場合、取り出された玉の色のデータをもとに袋の中の赤玉の数を推定していくことを行います。</p><p>Pyroを用いてベイズ学習を実装していく前に、必要最小限のベイズ学習の知識を復讐していきましょう。</p></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#pyroによる確率モデリング>Pyroによる確率モデリング</a><ul><li><a href=#確率プリミティブ>確率プリミティブ</a></li><li><a href=#簡単なモデルの例>簡単なモデルの例</a></li><li><a href=#モデル内部状態の把握>モデル内部状態の把握</a></li><li><a href=#複雑な確率モデル>複雑な確率モデル</a></li><li><a href=#ベイズ学習へ>ベイズ学習へ</a></li></ul></li></ul></nav></div></aside></main></body></html>
