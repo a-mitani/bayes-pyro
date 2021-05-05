@@ -1,0 +1,115 @@
+<!doctype html><html lang=en dir=ltr><head><meta name=generator content="Hugo 0.79.1"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'] ], displayMath: [ ['$$','$$'], [&#34;\\[&#34;,&#34;\\]&#34;] ] } });  MAP推定と最尤推定 #  前節までで変分近似を用いてベイズ推論を行ってきました。ベイズ推論は観測出来ない潜在パラメータを確率変数と捉え、ベイズの定理を利用して観測データ$\mathbf{X}$からそのパラメータの確率分布を推定するものでした。つまり潜在パラメータの確率変数を$\Theta$とすると下記の関係性を用いて事後分布$p(\Theta|\mathbf{X})$を求めることがベイズ推定です。 $$ p(\Theta|\mathbf{X}) = \frac{p(\mathbf{X}|\Theta)p(\Theta)}{p(\mathbf{X})}\tag{1} $$
+一方でわざわざ確率分布まで求めなくても、確率分布の最も頻度が高くなる一点を簡易的に求めれば事足りる場合も多々あります。そのような手法としてMAP推定や最尤推定と呼ばれる手法があります。本節ではこれらを紹介したうえでPyroでの計算方法を紹介します。
+■MAP推定 #  MAP推定のMAPはmaximum a posterioriの略であり、日本語に訳すと最大事後確率推定と呼ばれます。その名のとおり観測データに対して事後分布$p(\Theta|\mathbf{X})$が最大となるパラメータ値を推定する、つまり、 $$ \theta_{MAP} = \underset{\theta}{\operatorname{argmax}}~p(\Theta=\theta|\mathbf{X})=\underset{\theta}{\operatorname{argmax}}~p(\mathbf{X}|\Theta=\theta)p(\theta)\tag{2} $$ となる$\theta_{MAP}$を求める作業になります。ここで２つ目の等式は(1)式の関係性から容易に導けるでしょう。
+さて、これまで変分推論では事後確率に近しいと想定される近似関数$q(\theta)$を用意し、その近似関数の形が本来求めたい事後確率分布に近づくように近似関数のパラメータを最適化しました。その変分推論の枠組みに当てはめたとき、(2)式は近似関数$q(\theta)$をデルタ関数$\delta(\theta-\theta_{MAP})$と仮定して変分推論することとして解釈が可能です。
+ここでデルタ関数$\delta(\theta-\theta_{MAP})$は$\theta=\theta_{MAP}$で∞になり、それ以外の$\theta$ではゼロをとる無限に尖った関数であり$\int\delta(\theta-\theta_{MAP})d\theta=1$となります。
+以上のとおりMAP推定をデルタ関数を近似関数とした変分推論と解釈できるならPyroでもguide関数にデルタ関数を指定してあげれることでMAP推定を行うことができます。実際に前節の赤玉白玉の混合比率を例にPyroでMAP推定してみましょう。
+試行データ生成 #  試行結果データを生成するコードは前節と全く同様です。
+# 試行データ作成（前節と同一コード） def create_data(red_num, white_num): red = torch.tensor(1.0) white = torch.tensor(0.0) data = [] for _ in range(red_num): data.append(red) for _ in range(white_num): data.append(white) random.shuffle(data) data = torch."><meta name=theme-color content="#FFFFFF"><meta property="og:title" content="MAP推定と最尤推定"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://pyro-book.data-hacker.net/docs/mle_map/"><title>MAP推定と最尤推定 | Pyroで実践するベイズ機械学習</title><link rel=manifest href=https://pyro-book.data-hacker.net/manifest.json><link rel=icon href=https://pyro-book.data-hacker.net/favicon.png type=image/x-icon><link rel=stylesheet href=https://pyro-book.data-hacker.net/book.min.6c7c6446dfdee7c8c933e9bbc6e80ee3ed6c913b2a59519f2092c3c6a9d63e55.css integrity="sha256-bHxkRt/e58jJM+m7xugO4+1skTsqWVGfIJLDxqnWPlU="><script defer src=https://pyro-book.data-hacker.net/en.search.min.be76d8cdfe9227674534f827234033d9070a9c98f3060416aa53c744e9d8f6aa.js integrity="sha256-vnbYzf6SJ2dFNPgnI0Az2QcKnJjzBgQWqlPHROnY9qo="></script><script defer src=https://pyro-book.data-hacker.net/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js integrity="sha256-dKi7B/C+6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ="></script><link rel=alternate type=application/rss+xml href=https://pyro-book.data-hacker.net/docs/mle_map/index.xml title=Pyroで実践するベイズ機械学習></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a href=https://pyro-book.data-hacker.net/><span>Pyroで実践するベイズ機械学習</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=https://pyro-book.data-hacker.net/docs/what_is_pyro/>Pyroとは</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_modeling/>Pyroによる確率モデリング</a></li><li><a href=https://pyro-book.data-hacker.net/docs/bayes_learning_basic/>ベイズ学習の枠組み</a></li><li><a href=https://pyro-book.data-hacker.net/docs/vi_basic/>変分推論の基礎</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_vi/>変分推論を試す</a></li><li><a href=https://pyro-book.data-hacker.net/docs/mle_map/ class=active>MAP推定と最尤推定</a><br><br></li></ul><ul><li><a href=https://github.com/a-mitani/bayes-pyro target=_blank rel=noopener>Github</a></li></ul></nav><script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=https://pyro-book.data-hacker.net/svg/menu.svg class=book-icon alt=Menu></label>
+<strong>MAP推定と最尤推定</strong>
+<label for=toc-control><img src=https://pyro-book.data-hacker.net/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#map推定と最尤推定>MAP推定と最尤推定</a><ul><li><a href=#map推定>■MAP推定</a><ul><li><a href=#試行データ生成>試行データ生成</a></li><li><a href=#最適化ヘルパー関数を定義>最適化ヘルパー関数を定義</a></li><li><a href=#確率モデルと変分関数>確率モデルと変分関数</a></li></ul></li><li><a href=#最尤推定>■最尤推定</a></li></ul></li></ul></nav></aside></header><article class=markdown><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type=text/x-mathjax-config>
+ MathJax.Hub.Config({
+ tex2jax: {
+ inlineMath: [['$', '$'] ],
+ displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+ }
+ });
+</script><h1 id=map推定と最尤推定>MAP推定と最尤推定
+<a class=anchor href=#map%e6%8e%a8%e5%ae%9a%e3%81%a8%e6%9c%80%e5%b0%a4%e6%8e%a8%e5%ae%9a>#</a></h1><p>前節までで変分近似を用いてベイズ推論を行ってきました。ベイズ推論は観測出来ない潜在パラメータを確率変数と捉え、ベイズの定理を利用して観測データ$\mathbf{X}$からそのパラメータの<strong>確率分布を推定する</strong>ものでした。つまり潜在パラメータの確率変数を$\Theta$とすると下記の関係性を用いて事後分布$p(\Theta|\mathbf{X})$を求めることがベイズ推定です。
+$$
+p(\Theta|\mathbf{X}) = \frac{p(\mathbf{X}|\Theta)p(\Theta)}{p(\mathbf{X})}\tag{1}
+$$</p><p>一方でわざわざ確率分布まで求めなくても、確率分布の最も頻度が高くなる一点を簡易的に求めれば事足りる場合も多々あります。そのような手法としてMAP推定や最尤推定と呼ばれる手法があります。本節ではこれらを紹介したうえでPyroでの計算方法を紹介します。</p><h2 id=map推定>■MAP推定
+<a class=anchor href=#map%e6%8e%a8%e5%ae%9a>#</a></h2><p>MAP推定のMAPはmaximum a posterioriの略であり、日本語に訳すと最大事後確率推定と呼ばれます。その名のとおり観測データに対して事後分布$p(\Theta|\mathbf{X})$が最大となるパラメータ値を推定する、つまり、
+$$
+\theta_{MAP} = \underset{\theta}{\operatorname{argmax}}~p(\Theta=\theta|\mathbf{X})=\underset{\theta}{\operatorname{argmax}}~p(\mathbf{X}|\Theta=\theta)p(\theta)\tag{2}
+$$
+となる$\theta_{MAP}$を求める作業になります。ここで２つ目の等式は(1)式の関係性から容易に導けるでしょう。</p><p>さて、これまで変分推論では事後確率に近しいと想定される近似関数$q(\theta)$を用意し、その近似関数の形が本来求めたい事後確率分布に近づくように近似関数のパラメータを最適化しました。その変分推論の枠組みに当てはめたとき、(2)式は近似関数$q(\theta)$をデルタ関数$\delta(\theta-\theta_{MAP})$と仮定して変分推論することとして解釈が可能です。</p><p>ここでデルタ関数$\delta(\theta-\theta_{MAP})$は$\theta=\theta_{MAP}$で∞になり、それ以外の$\theta$ではゼロをとる無限に尖った関数であり$\int\delta(\theta-\theta_{MAP})d\theta=1$となります。</p><p>以上のとおりMAP推定をデルタ関数を近似関数とした変分推論と解釈できるならPyroでも<code>guide</code>関数にデルタ関数を指定してあげれることでMAP推定を行うことができます。実際に前節の赤玉白玉の混合比率を例にPyroでMAP推定してみましょう。</p><h3 id=試行データ生成>試行データ生成
+<a class=anchor href=#%e8%a9%a6%e8%a1%8c%e3%83%87%e3%83%bc%e3%82%bf%e7%94%9f%e6%88%90>#</a></h3><p>試行結果データを生成するコードは前節と全く同様です。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># 試行データ作成（前節と同一コード）</span>
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>create_data</span>(red_num, white_num):
+    red <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>1.0</span>)
+    white <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>0.0</span>)
+    data <span style=color:#f92672>=</span> []
+    <span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> range(red_num):
+        data<span style=color:#f92672>.</span>append(red)
+    <span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> range(white_num):
+        data<span style=color:#f92672>.</span>append(white)
+    random<span style=color:#f92672>.</span>shuffle(data)
+    data <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor(data)
+    <span style=color:#66d9ef>return</span> data
+
+data <span style=color:#f92672>=</span> create_data(<span style=color:#ae81ff>6</span>, <span style=color:#ae81ff>4</span>)
+</code></pre></div><h3 id=最適化ヘルパー関数を定義>最適化ヘルパー関数を定義
+<a class=anchor href=#%e6%9c%80%e9%81%a9%e5%8c%96%e3%83%98%e3%83%ab%e3%83%91%e3%83%bc%e9%96%a2%e6%95%b0%e3%82%92%e5%ae%9a%e7%be%a9>#</a></h3><p>後ほど最尤推定でも再利用できるように最適化の一連の処理を関数化します。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># 最適化計算用のヘルパー関数</span>
+<span style=color:#75715e>#　引数として指定されたmodelの関数とguide関数を用いてELBOの最大化を行う</span>
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>optimize_param</span>(model_fn, guide_fn):
+    <span style=color:#75715e># グローバル変数として保存されているパラメータを削除</span>
+    pyro<span style=color:#f92672>.</span>clear_param_store()
+
+    <span style=color:#75715e># Optimizerの定義と設定（Adamの利用が推奨されている）</span>
+    adam_params <span style=color:#f92672>=</span> {<span style=color:#e6db74>&#34;lr&#34;</span>: <span style=color:#ae81ff>0.001</span>, <span style=color:#e6db74>&#34;betas&#34;</span>: (<span style=color:#ae81ff>0.95</span>, <span style=color:#ae81ff>0.999</span>)}
+    optimizer <span style=color:#f92672>=</span> Adam(adam_params)
+
+    <span style=color:#75715e># 推論アルゴリズムとLoss値を定義</span>
+    <span style=color:#75715e># ここでは組み込みのELBOの符号反転をLoss値とする`Trace_ELBO()`を利用しています。</span>
+    svi <span style=color:#f92672>=</span> SVI(model_fn, guide_fn, optimizer, loss<span style=color:#f92672>=</span>Trace_ELBO())
+
+    <span style=color:#75715e># 最適化の逐次計算</span>
+    <span style=color:#75715e># ここではAdamで勾配降下を1000回繰り返すことになる。</span>
+    n_steps <span style=color:#f92672>=</span> <span style=color:#ae81ff>1000</span>
+    losses <span style=color:#f92672>=</span> []
+    <span style=color:#66d9ef>for</span> step <span style=color:#f92672>in</span> range(n_steps):
+        loss <span style=color:#f92672>=</span> svi<span style=color:#f92672>.</span>step(data)
+        losses<span style=color:#f92672>.</span>append(loss)
+        <span style=color:#66d9ef>if</span> step <span style=color:#f92672>%</span> <span style=color:#ae81ff>100</span> <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
+            <span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#39;#&#39;</span>, end<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;&#39;</span>)
+
+    plt<span style=color:#f92672>.</span>plot(losses)
+    plt<span style=color:#f92672>.</span>show()
+</code></pre></div><h3 id=確率モデルと変分関数>確率モデルと変分関数
+<a class=anchor href=#%e7%a2%ba%e7%8e%87%e3%83%a2%e3%83%87%e3%83%ab%e3%81%a8%e5%a4%89%e5%88%86%e9%96%a2%e6%95%b0>#</a></h3><p>上述のようにMAP推定は変分推論の枠組みで変分関数としてデルタ関数を仮定するものというお話をしました。そのため確率モデルは前節と全く同じでよく、また変分関数を規定する<code>guide</code>関数はデルタ分布を用います。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># 確率モデルの定義</span>
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>model</span>(data):
+    <span style=color:#75715e># 事前確率分布は比率0.5に穏やかなピークを持つ関数を仮定する。</span>
+    alpha0 <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>2.0</span>)
+    beta0 <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>2.0</span>)
+    f <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;Theta&#34;</span>, dist<span style=color:#f92672>.</span>Beta(alpha0, beta0))
+
+    <span style=color:#75715e># 観測データのプレート定義</span>
+    <span style=color:#66d9ef>with</span> pyro<span style=color:#f92672>.</span>plate(<span style=color:#e6db74>&#39;observation&#39;</span>):
+      pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#39;X&#39;</span>, dist<span style=color:#f92672>.</span>Bernoulli(f), obs<span style=color:#f92672>=</span>data)
+
+<span style=color:#75715e># MAP推定や最終推定は変分関数としてデルタ関数を仮定する。</span>
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>guide_delta</span>(data):
+    theta_opt <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#34;theta_opt&#34;</span>, torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>0.5</span>),
+                       constraint<span style=color:#f92672>=</span>constraints<span style=color:#f92672>.</span>unit_interval)
+    pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;Theta&#34;</span>, dist<span style=color:#f92672>.</span>Delta(theta_opt))
+</code></pre></div><p>確率モデルと変分関数が用意できたら、変分関数のパラメータ（今回の場合<code>theta_opt</code>）の最適化を行います。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#　MAP推定用のmodel関数とguide関数を指定して最適化を実施</span>
+optimize_param(model_map, guide_delta)
+
+<span style=color:#75715e># 最適化後の変分パラメータを取得する</span>
+theta <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#34;theta_opt&#34;</span>)<span style=color:#f92672>.</span>item()
+<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;theta_opt = {:.3f}&#34;</span><span style=color:#f92672>.</span>format(theta))
+<span style=color:#75715e>## Output</span>
+<span style=color:#75715e># theta_opt = 0.583</span>
+</code></pre></div><p>上記の結果、<code>thata_opt</code>つまり$\theta_{MAP}$は<code>0.583</code>となりました。前節で行ったベイズ推定結果の事後確率分布の最頻値とほぼ同じ値が求まったことに注意してください。これはMAP推定が全体の確率分布までは求めないけど確率分布の最頻値をとる潜在パラメータの値を求める推定方法であることを考えると納得がいくでしょう。</p><p>また、試行データを作成する際に、<code>data = create_data(60, 40)</code>として、合計100回の試行データを作成すると<code>theta_opt = 0.599</code>となります。これは試行回数が増えれば増えるほど、最初に想定していた事前確率分布よりも試行データのほうが重みが増えて試行データの結果の比に近づいていくことを示しています。</p><h2 id=最尤推定>■最尤推定
+<a class=anchor href=#%e6%9c%80%e5%b0%a4%e6%8e%a8%e5%ae%9a>#</a></h2><p>単に観測データ$\mathbf{X}$に対する尤度が最大となる$\theta$を求める、すなわち
+$$
+\theta_{MLE} = \underset{\theta}{\operatorname{argmax}}~p(\mathbf{X}|\Theta=\theta)
+$$
+となる$\theta_{MLE}$を求めるのが最尤推定（Maximum Likelihood Estimation: MLE）です。</p><p>これは(2)式と見比べると潜在パラメータの事前分布を$p(\Theta)$を一定値とした（すなわち事前情報がないとした）MAP推定をしていると解釈することができます。</p><p>以上のことからPyroで最尤推定を行うには場合、事前分布を一様分布としてMAP推定を行えばよいことが分かります。確率モデルは下記のように定義することができます。0~1の範囲で一様分布となる<code>dist.Uniform(0.0, 1.0)</code>で事前分布が定義されているのに注意してください。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># 最尤推定用に確率モデルの定義（ベイズ推定の際と全く同じことに注意）</span>
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>model_mle</span>(data):
+    <span style=color:#75715e># 事前確率分布は一定値（無情報）として一様分布を指定する</span>
+    f <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;Theta&#34;</span>, dist<span style=color:#f92672>.</span>Uniform(<span style=color:#ae81ff>0.0</span>, <span style=color:#ae81ff>1.0</span>))
+
+    <span style=color:#75715e># 観測データのプレート定義</span>
+    <span style=color:#66d9ef>with</span> pyro<span style=color:#f92672>.</span>plate(<span style=color:#e6db74>&#39;observation&#39;</span>):
+      pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#39;X&#39;</span>, dist<span style=color:#f92672>.</span>Bernoulli(f), obs<span style=color:#f92672>=</span>data)
+</code></pre></div><p>上記の確率モデル関数を用いて最適化を以下のように行うことができます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#　MAP推定用のmodel関数とguide関数を指定して最適化を実施</span>
+optimize_param(model_mle, guide_delta)
+
+<span style=color:#75715e># 最適化後の変分パラメータを取得する</span>
+theta <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#34;theta_opt&#34;</span>)<span style=color:#f92672>.</span>item()
+<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;theta_opt = {:.3f}&#34;</span><span style=color:#f92672>.</span>format(theta))
+<span style=color:#75715e>## Output</span>
+theta_opt <span style=color:#f92672>=</span> <span style=color:#ae81ff>0.600</span>
+</code></pre></div><p><code>thata_opt</code>つまり$\theta_{MAP}S$は<code>0.600</code>となりました。</p><p>ちなみに<code>data = create_data(3, 2)</code>というように試行回数を幾ら減らしたデータを用いても<code>theta_opt=0.600</code>という結果は変わりません。これは最尤推定では例えば比率が半分である可能性が高いといったような事前情報を導入していないため、試行データだけをもとに混合比率を推定したことに起因します。その結果「赤玉と白玉がそれぞれ3回と2回取り出された」という結果に過剰適合（Overfitting）した結果になります。</p></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#map推定と最尤推定>MAP推定と最尤推定</a><ul><li><a href=#map推定>■MAP推定</a><ul><li><a href=#試行データ生成>試行データ生成</a></li><li><a href=#最適化ヘルパー関数を定義>最適化ヘルパー関数を定義</a></li><li><a href=#確率モデルと変分関数>確率モデルと変分関数</a></li></ul></li><li><a href=#最尤推定>■最尤推定</a></li></ul></li></ul></nav></div></aside></main></body></html>
