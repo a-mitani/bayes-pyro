@@ -23,8 +23,8 @@ weight: 1
 
 **例：袋の中のボールの比率の推論**
 
-赤玉と白玉が入っている袋があり、その中に入っている赤玉と白玉の数の比率（以下、混合比率）はわかっていません。ここで袋の中からランダムに１つを取り出しそのボールの色を確認後、箱の中に戻すという操作を複数回行います。
-この時、10回の試行で赤が7回、白が3回が出た場合、玉の混合比率の確率分布をPyroを用いて推論していくことにします。
+赤玉と白玉が入っている中身が見えない袋があります。袋の中の赤玉と白玉の数は同数入っている（混合比率=0.5）という事前情報がありますが、実際のところはわかっていません。そこで袋の中からランダムに１つを取り出しそのボールの色を確認後、箱の中に戻すという操作を複数回行います。
+この時、10回の試行で赤が６回、白が４回が出た場合、玉の混合比率についてどういう推論が可能でしょうか？ベイズ推論の枠組みに従い混合比率の確率分布をPyroを用いて推論していくことにします。
 
 ## 試行データ
 ここでまず上記例の試行結果のデータを作っておきます。
@@ -42,7 +42,7 @@ def create_data(red_num, white_num):
     data = torch.tensor(data)
     return data
 
-data = create_data(7, 3)
+data = create_data(6, 4)
 ```
 ## 確率モデルの構築
 混合比率の推論に向けて、まず最初に今回の事象が発生する確率モデルを構築します。
@@ -64,16 +64,17 @@ $$p(\mathbf{X}=\mathbf{x}, \Theta=\theta)=\prod_{i=1}^{N} p(X_i=x_i|\Theta=\thet
 $$p(X_i|\Theta=\theta)=\operatorname{Bern}(X_i, \theta)$$
 
 と仮定します。
-また今回の例の場合、袋の中の玉の比率に関しては0から1の値を取るということ以外は何の事前情報も持っていません。そのためここでは一様分布の形をとるベータ分布
-$$p(\Theta)=\operatorname{Beta}(\Theta|\alpha = 1, \beta = 1)$$
+また今回の例の場合、袋の中には赤玉と白玉同数入っているという事前情報があるのでそれをモデルに取り込むために、比率0.5に穏やかなピークをもつベータ分布
+$$p(\Theta)=\operatorname{Beta}(\Theta|\alpha = 2, \beta = 2)$$
 と仮定します[^beta]。
 
 この確率モデルをPyroで記述してみます。前節で述べたとおりPyroでは確率モデルを確率プリミティブを組み合わせた関数の形で記述します。今回のモデルは以下の様に実装することができます。
 ```python
+# 確率モデルの定義
 def model(data):
-    # 比率Thetaの事前確率分布は無情報、つまり一様分布と仮定する。
-    alpha0 = torch.tensor(1.0)
-    beta0 = torch.tensor(1.0)
+    # 事前確率分布は比率0.5に穏やかなピークを持つ関数を仮定する。
+    alpha0 = torch.tensor(2.0)
+    beta0 = torch.tensor(2.0)
     f = pyro.sample("Theta", dist.Beta(alpha0, beta0))
 
     # 観測データのプレート定義
@@ -88,10 +89,14 @@ Pyroでは条件付き独立な関係の確率変数を,グラフィカルモデ
 Pyroでは変分関数の定義もモデルの定義と同様に確率プリミティブを組み合わせた関数の形で記述します。Pyroではこの変分関数を定義する関数を`guide`と呼びます。
 ```python
 def guide(data):
+    # 変分パラメータαとβを定義する。
+    # 初期値は共に10としている。
+    # また、ベータ分布においてこれらのパラメータは正の値なので`constraints.positive`を指定。
     alpha_q = pyro.param("alpha_q", torch.tensor(10.0),
                          constraint=constraints.positive)
     beta_q = pyro.param("beta_q", torch.tensor(10.0),
                         constraint=constraints.positive)
+    # 最適化されたパラメータのベータ分布から混合率Θをサンプリングする
     pyro.sample("Theta", dist.Beta(alpha_q, beta_q))
 ```
 `guide`を定義する際、以下の点に注意する必要があります。
@@ -108,7 +113,7 @@ def guide(data):
 pyro.clear_param_store()
 
 # Optimizerの定義と設定（Adamの利用が推奨されている）
-adam_params = {"lr": 0.005, "betas": (0.95, 0.999)}
+adam_params = {"lr": 0.002, "betas": (0.95, 0.999)}
 optimizer = Adam(adam_params)
 
 # 推論アルゴリズムとLoss値を定義
@@ -116,8 +121,8 @@ optimizer = Adam(adam_params)
 svi = SVI(model, guide, optimizer, loss=Trace_ELBO())
 
 # 最適化の逐次計算
-# ここではAdamで勾配降下を5000回繰り返すことになる。
-n_steps = 5000
+# ここではAdamで勾配降下を1000回繰り返すことになる。
+n_steps = 1000
 losses = []
 for step in range(n_steps):
     loss = svi.step(data)
@@ -128,18 +133,20 @@ for step in range(n_steps):
 plt.plot(losses)
 ```
 ここで、最適化を行う前に、`pyro.clear_param_store()`を実行しています。これはPyroではグローバル変数として各変分パラメータを保持しているため、それを消す処理を行っています。
-またこのコードでは、`svi.step()`はLoss値（ELBOの符号逆転値）が返却されるので、Lossの変化をプロットしています。結果は以下の図のようになります。SVI(Stochastic Variational Inference)は確率的勾配降下法(SGD)と同様に計算速度を上げるためにミニバッチで勾配計算を行う[^review_vi]ためLossがランダムに振動していますが、5000回イタレーションを繰り返すと、ELBOが小さいところで落ち着いているのが見てとれます。
+またこのコードでは、`svi.step()`はLoss値（ELBOの符号逆転値）が返却されるので、Lossの変化をプロットしています。結果は以下の図のようになります。SVI(Stochastic Variational Inference)は確率的勾配降下法(SGD)と同様に計算速度を上げるためにミニバッチで勾配計算を行う[^review_vi]ためLossがランダムに振動していますが、1000回イタレーションを繰り返すと、ELBOが小さいところで落ち着いているのが見てとれます。
 
 <center>
 <img src="svi_ball_elbo.png" width="300">
 </center>
 
-この最適化後の変分パラメータは以下のコードで取得できます。
+この最適化後の変分パラメータは以下のコードのように`pyro.param`で取得できます。
 ```python
 # 最適化後の変分パラメータを取得する
 alpha_q = pyro.param("alpha_q").item()
 beta_q = pyro.param("beta_q").item()
 print("alpha_q = {:.2f}, beta_q = {:.2f}".format(alpha_q, beta_q))
+## Output
+#alpha_q = 10.55, beta_q = 7.80
 ```
 我々は混合分布の事後確率分布をベータ分布と仮定していましたから、上記のパラメータを用いて事後確率分布の様子をプロットして確認してみましょう。
 ```python
@@ -149,15 +156,37 @@ estimated_dist = dist.Beta(alpha_q, beta_q)
 y = [estimated_dist.log_prob(torch.tensor([x])).exp() for x in x_range]
 plt.plot(x_range, y)
 ```
-得られるグラフは下図のようになります。事後分布$p(\Theta|X)$は0.7付近が最も大きくなっており、これは10回の試行で赤が7回出た観測事象と辻褄が合っているのがわかります。ただし10回の観測ではまだ混合比率に曖昧性があり、確率分布の裾野が比較的広い確率分布となります。
+得られるグラフは下図のようになります。事後分布$p(\Theta|X)$は0.6付近が最も大きくなっており、これは10回の試行で赤が6回出た観測事象と辻褄が合っているのがわかります。ただし10回の観測ではまだ混合比率に曖昧性があり、確率分布の裾野が比較的広い確率分布となります。
 
 <center>
 <img src="pdf_beta_10.png" width="300">
 </center>
 
-さらに観測回数を増やして100回の試行でそのうち赤が70回、白が30回取り出された場合はどのような混合比率の事後分布になるでしょうか？
-試行データ作成時に`data = create_data(70, 30)`としてデータを作成して同様の推論を行ってみます。
-すると結果の事後分布は下記のような形となり、10回の時よりも混合比率が0.7である確信が強まり、確率分布の裾野が10回の思考の場合よりも狭まっているのがわかります。
+より具体的に今回推論された確率分布の最頻値を求めてみましょう。
+計算結果は以下のようになります。
+ここで、最頻値0.584となっており、観測結果の0.6より小さくなっているのに注意してください。これは事前確率として0.5をピークに持つ関数を設定していることにより起きています。観測だけを信じると0.6ですが、試行回数が10回程度であればその結果だけを信じて取り込むよりも事前情報の0.5もある程度加味された事後分布になっているという状況です。
+
+```python
+# 最頻値を計算
+mode = (alpha_q - 1) / (alpha_q + beta_q - 2)
+print("mode = {:.3f}".format(mode))
+
+# 平均値を計算
+mean = alpha_q / (alpha_q + beta_q)
+# 標準偏差を計算
+factor = beta_q / (alpha_q * (1.0 + alpha_q + beta_q))
+std = mean * np.sqrt(factor)
+print("infered ratio = {:.3f} +- {:.3f}".format(mean, std))
+## Output
+# mode = 0.584
+# infered ratio = 0.575 +- 0.112
+```
+
+
+
+さらに観測回数を増やして1000回の試行でそのうち赤が600回、白が400回取り出された場合はどのような混合比率の事後分布になるでしょうか？
+試行データ作成時に`data = create_data(600, 400)`としてデータを作成して同様の推論を行ってみます。
+すると結果の事後分布は下記のような形となり、10回の時よりも混合比率が0.6である確信が強まり、確率分布の裾野が10回の思考の場合よりも狭まっているのがわかります。
 
 <center>
 <img src="pdf_beta_100.png" width="300">
