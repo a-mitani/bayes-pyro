@@ -198,46 +198,6 @@ print("infered ratio = {:.3f} +- {:.3f}".format(mean, std))
 
 以上、Pyroを用いて簡単な例での変分推定のやり方を見てきました。今回のコードは[Github](https://github.com/a-mitani/pyro_code_examples/blob/main/svi-basic.ipynb)に配置していますので参考にしてみてください。
 
-## 補足：`pyro.plate`を用いたサンプリングについて
-今回の例では確率モデルをPyro上で記述する際にコンテキストマネージャである`pyro.plate`を用いて複数の観測を記述しました。
-
-この`pyro.plate`は記述を簡潔にすることに加えて、このコンテキスト内でサンプルされた事象間はお互いに独立であることをPyroに明示的に伝える役割があります。このことは特に推論時の処理時間に非常に大きな影響を与えます。サンプル間が非独立である場合、Pyroはサンプリングをforループのように逐次的に行う必要がありますが、独立である場合は並列でサンプリングすることができるからです。
-
-下記に、同じ確率分布の確率変数の実現値を①逐次的にサンプルするコード、②`pyro.plate`を用いて並列サンプリングを行ったコードの２つを示します。同じ10万回のサンプルにもかかわらず`pyro.plate`を用いた場合のほうが圧倒的に処理速度が速いことがわかります。また並列サンプリングされた変数値は１つのTensorに格納されていることにも注意してください。
-
-そこで変数間が独立であることがわかっている場合は積極的に`pyro.plate`を用いることが推奨されます。
-
-```python
-# 正規分布をFor文を用いて逐次的にサンプリング
-start = time.time()
-samples = []
-for i in range(100000):
-    sampled_item = pyro.sample("sample_{}".format(i), dist.Normal(0, 1))
-    samples.append(sampled_item)
-
-print('elapsed_time = {:.5f} sec'.format(time.time() - start))
-print('The shape of sampled variable = ', sampled_item.size())
-print('The sampled variable = ', sampled_item)
-
-### Output
-# elapsed_time = 7.31403 sec
-# The shape of sampled variable =  torch.Size([])
-# The sampled variable =  tensor(-0.5368)
-```
-
-```python
-# pyro.plateを用いて１つの変数（Tensor）でサンプリング場合
-start = time.time()
-with pyro.plate("plate1", size=100000):
-    samples = pyro.sample("samples", dist.Normal(0, 1))
-print('elapsed_time = {:.5f} sec'.format(time.time() - start))
-print('The shape of sampled variable = ', samples.size())
-plt.hist(samples, bins=50)
-
-### Output
-# elapsed_time = 0.00705 sec
-# The shape of sampled variable =  torch.Size([100000])
-```
 
 
 [^graph]: グラフィカルモデルの詳細は例えば[このレビュー論文](https://projecteuclid.org/journals/statistical-science/volume-19/issue-1/Graphical-Models/10.1214/088342304000000026.full)でわかりやすく解説されているので参照してください。
