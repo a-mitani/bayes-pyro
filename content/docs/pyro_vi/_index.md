@@ -1,5 +1,5 @@
 ---
-title: Pyroで変分推論
+title: Pyroでの変分推論
 weight: 1
 ---
 <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
@@ -13,7 +13,7 @@ weight: 1
  });
 </script>
 
-# 変分推論を試す
+# Pyroでの変分推論
 前節で変分近似は、
 1. 対象の事象の発生過程を確率モデルとしてモデリングする。
 2. 推定したいパラメータが従う事後確率分布の近似関数（変分関数）を仮定する。
