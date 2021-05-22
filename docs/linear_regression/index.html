@@ -1,0 +1,177 @@
+<!doctype html><html lang=en dir=ltr><head><meta name=generator content="Hugo 0.79.1"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'] ], displayMath: [ ['$$','$$'], [&#34;\\[&#34;,&#34;\\]&#34;] ] } });  ベイズ線形回帰 #  本節では回帰問題をPyroを使ってベイズ機械学習（ここでは変分近似）の枠組みで考えていきます。回帰問題は一般に説明変数$\mathbf{x}$と説明変数$y$の$N$個のセット、すなわち $$ \mathcal{D}={(\mathbf{x}_1, y_1),\cdots(\mathbf{x}_i, y_i)\cdots ,(\mathbf{x}_N, y_N)} $$ が与えられたとき、それぞれのサンプルに対して $$ y_i = f(\mathbf{w}, \mathbf{x}_i, \epsilon_i)\tag{1} $$ のように$y_i$を未知のパラメータ$\mathbf{w}$と説明変数$\mathbf{x}_i$と観測誤差$\epsilon_i$の関数で表されると仮定し、パラメータ$\mathbf{w}$をデータセット$\mathcal{D}$から推論するタスクになります。
+$\mathbf{X}=\lbrace\mathbf{x}_1,\cdots, \mathbf{x}_N\rbrace$、$\mathbf{Y}=\lbrace y_1,\cdots, y_N\rbrace$とすると、$\mathbf{w}$、$\mathbf{X}$、$\mathbf{Y}$の同時確率は
+$$ p(\mathbf{X},\mathbf{Y},\mathbf{w})=p(\mathbf{w})\prod_{i=1}^{N}p(y_i|\mathbf{x}_i,\mathbf{w})p(\mathbf{x}_i)\tag{2} $$ と書けることが分かります。ここで各サンプル間は独立であることをを仮定しており積の形で表せることに注意してください。この同時確率はグラフィカルモデルで表すと下図のように書けます。
+  (2)式と事後確率の定義から$\mathbf{X}$と$\mathbf{Y}$組みが観測されたときの$\mathbf{w}$の事後分布は以下のように書けることが分かります。 $$ p(\mathbf{w}|\mathbf{X},\mathbf{Y})=\frac{p(\mathbf{X},\mathbf{Y},\mathbf{w})}{p(\mathbf{X})p(\mathbf{Y})}\propto p(\mathbf{w})\prod_{i=1}^{N}p(y_i|\mathbf{x}_i,\mathbf{w})\tag{3} $$
+この事後分布を求めるタスクがベイズ回帰です。
+■１次元線形回帰 #  まずは回帰の最も簡単な例として１次元線形回帰を考えていきましょう。この場合(1)式の具体的な関数型として $$ y_i=w_0 + w_1 x_i + \epsilon_i \tag{4} $$ と仮定することに相当します。ここで$\epsilon_i$を平均0、標準偏差$\sigma$のガウス分布に従う、つまり $$ \epsilon \sim \mathcal{N}(\epsilon|0, \sigma) \tag{5} $$ と仮定すると、(4)、(5)式をまとめることで(2)式の中の$p(y_i|\mathbf{x}_i,\mathbf{w})$は具体的に $$ p(y_i|\mathbf{x}_i,\mathbf{w})=\mathcal{N}(y_i|w_0+w_1 x_i, \sigma)\tag{5} $$ と書けることが分かります。 ここで観測誤差の広がり度合いを示す$\sigma$も推定したいパラメータとすると(2)式は $$ p(\mathbf{X},\mathbf{Y},w_0,w_1,\sigma)=p(w_0)p(w_1)p(\sigma)\prod_i\mathcal{N}(y_i|w_0+w_1 x_i, \sigma)p(x_i)\tag{6} $$ という具体的な形に書くことができます。またこの同時確率をグラフィカルモデルで記述すれば以下の図のようになります。"><meta name=theme-color content="#FFFFFF"><meta property="og:title" content="ベイズ線形回帰"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://pyro-book.data-hacker.net/docs/linear_regression/"><title>ベイズ線形回帰 | Pyroで実践するベイズ機械学習</title><link rel=manifest href=https://pyro-book.data-hacker.net/manifest.json><link rel=icon href=https://pyro-book.data-hacker.net/favicon.png type=image/x-icon><link rel=stylesheet href=https://pyro-book.data-hacker.net/book.min.6c7c6446dfdee7c8c933e9bbc6e80ee3ed6c913b2a59519f2092c3c6a9d63e55.css integrity="sha256-bHxkRt/e58jJM+m7xugO4+1skTsqWVGfIJLDxqnWPlU="><script defer src=https://pyro-book.data-hacker.net/en.search.min.4a717b251edd507a4bdc5e7b001d0c1b67617f58f7fd7a0d5586b6f03aefee73.js integrity="sha256-SnF7JR7dUHpL3F57AB0MG2dhf1j3/XoNVYa28Drv7nM="></script><script defer src=https://pyro-book.data-hacker.net/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js integrity="sha256-dKi7B/C+6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ="></script><link rel=alternate type=application/rss+xml href=https://pyro-book.data-hacker.net/docs/linear_regression/index.xml title=Pyroで実践するベイズ機械学習></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a href=https://pyro-book.data-hacker.net/><span>Pyroで実践するベイズ機械学習</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=https://pyro-book.data-hacker.net/docs/what_is_pyro/>Pyroとは</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_modeling/>Pyroによる確率モデリング</a></li><li><a href=https://pyro-book.data-hacker.net/docs/bayes_learning_basic/>ベイズ学習の枠組み</a></li><li><a href=https://pyro-book.data-hacker.net/docs/vi_basic/>変分推論の基礎</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_vi/>Pyroでの変分推論</a></li><li><a href=https://pyro-book.data-hacker.net/docs/mle_map/>MAP推定と最尤推定</a></li><li><a href=https://pyro-book.data-hacker.net/docs/linear_regression/ class=active>ベイズ線形回帰</a><br><br></li></ul><ul><li><a href=https://github.com/a-mitani/bayes-pyro target=_blank rel=noopener>Github</a></li></ul></nav><script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=https://pyro-book.data-hacker.net/svg/menu.svg class=book-icon alt=Menu></label>
+<strong>ベイズ線形回帰</strong>
+<label for=toc-control><img src=https://pyro-book.data-hacker.net/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#ベイズ線形回帰>ベイズ線形回帰</a><ul><li><a href=#１次元線形回帰>■１次元線形回帰</a><ul><li><a href=#確率モデルの構築>確率モデルの構築</a></li><li><a href=#変分関数を指定>変分関数を指定</a></li><li><a href=#推論>推論</a></li><li><a href=#学習モデルの確認>学習モデルの確認</a></li></ul></li></ul></li></ul></nav></aside></header><article class=markdown><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type=text/x-mathjax-config>
+ MathJax.Hub.Config({
+ tex2jax: {
+ inlineMath: [['$', '$'] ],
+ displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+ }
+ });
+</script><h1 id=ベイズ線形回帰>ベイズ線形回帰
+<a class=anchor href=#%e3%83%99%e3%82%a4%e3%82%ba%e7%b7%9a%e5%bd%a2%e5%9b%9e%e5%b8%b0>#</a></h1><p>本節では回帰問題をPyroを使ってベイズ機械学習（ここでは変分近似）の枠組みで考えていきます。回帰問題は一般に説明変数$\mathbf{x}$と説明変数$y$の$N$個のセット、すなわち
+$$
+\mathcal{D}={(\mathbf{x}_1, y_1),\cdots(\mathbf{x}_i, y_i)\cdots ,(\mathbf{x}_N, y_N)}
+$$
+が与えられたとき、それぞれのサンプルに対して
+$$
+y_i = f(\mathbf{w}, \mathbf{x}_i, \epsilon_i)\tag{1}
+$$
+のように$y_i$を未知のパラメータ$\mathbf{w}$と説明変数$\mathbf{x}_i$と観測誤差$\epsilon_i$の関数で表されると仮定し、パラメータ$\mathbf{w}$をデータセット$\mathcal{D}$から推論するタスクになります。</p><p>$\mathbf{X}=\lbrace\mathbf{x}_1,\cdots, \mathbf{x}_N\rbrace$、$\mathbf{Y}=\lbrace y_1,\cdots, y_N\rbrace$とすると、$\mathbf{w}$、$\mathbf{X}$、$\mathbf{Y}$の同時確率は</p><p>$$
+p(\mathbf{X},\mathbf{Y},\mathbf{w})=p(\mathbf{w})\prod_{i=1}^{N}p(y_i|\mathbf{x}_i,\mathbf{w})p(\mathbf{x}_i)\tag{2}
+$$
+と書けることが分かります。ここで各サンプル間は独立であることをを仮定しており積の形で表せることに注意してください。この同時確率はグラフィカルモデルで表すと下図のように書けます。</p><center><img src=general_regression.png width=400></center><p>(2)式と事後確率の定義から$\mathbf{X}$と$\mathbf{Y}$組みが観測されたときの$\mathbf{w}$の事後分布は以下のように書けることが分かります。
+$$
+p(\mathbf{w}|\mathbf{X},\mathbf{Y})=\frac{p(\mathbf{X},\mathbf{Y},\mathbf{w})}{p(\mathbf{X})p(\mathbf{Y})}\propto p(\mathbf{w})\prod_{i=1}^{N}p(y_i|\mathbf{x}_i,\mathbf{w})\tag{3}
+$$</p><p>この事後分布を求めるタスクがベイズ回帰です。</p><h2 id=１次元線形回帰>■１次元線形回帰
+<a class=anchor href=#%ef%bc%91%e6%ac%a1%e5%85%83%e7%b7%9a%e5%bd%a2%e5%9b%9e%e5%b8%b0>#</a></h2><p>まずは回帰の最も簡単な例として１次元線形回帰を考えていきましょう。この場合(1)式の具体的な関数型として
+$$
+y_i=w_0 + w_1 x_i + \epsilon_i \tag{4}
+$$
+と仮定することに相当します。ここで$\epsilon_i$を平均0、標準偏差$\sigma$のガウス分布に従う、つまり
+$$
+\epsilon \sim \mathcal{N}(\epsilon|0, \sigma) \tag{5}
+$$
+と仮定すると、(4)、(5)式をまとめることで(2)式の中の$p(y_i|\mathbf{x}_i,\mathbf{w})$は具体的に
+$$
+p(y_i|\mathbf{x}_i,\mathbf{w})=\mathcal{N}(y_i|w_0+w_1 x_i, \sigma)\tag{5}
+$$
+と書けることが分かります。
+ここで観測誤差の広がり度合いを示す$\sigma$も推定したいパラメータとすると(2)式は
+$$
+p(\mathbf{X},\mathbf{Y},w_0,w_1,\sigma)=p(w_0)p(w_1)p(\sigma)\prod_i\mathcal{N}(y_i|w_0+w_1 x_i, \sigma)p(x_i)\tag{6}
+$$
+という具体的な形に書くことができます。またこの同時確率をグラフィカルモデルで記述すれば以下の図のようになります。</p><center><img src=linear_regression_1d.png width=400></center><p>ここで未知のパラメータ$w_0$、$w_1$、$\sigma$（以降、これらを潜在変数と呼ぶ）の事後確率分布を求めるのが今回の一次元線形回帰のタスクになります。まずは
+(6)式の確率モデルをPyroを用いて記述し変分推定を行っていくところをみていきましょう。</p><p>なお以降では下記のコードを実行されている前提で話を進めていきます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> matplotlib.pyplot <span style=color:#f92672>as</span> plt
+<span style=color:#f92672>import</span> numpy <span style=color:#f92672>as</span> np
+
+<span style=color:#f92672>import</span> torch
+<span style=color:#f92672>from</span> torch.distributions <span style=color:#f92672>import</span> constraints
+
+<span style=color:#f92672>import</span> pyro
+<span style=color:#f92672>import</span> pyro.distributions <span style=color:#f92672>as</span> dist
+<span style=color:#f92672>from</span> pyro.infer <span style=color:#f92672>import</span> SVI, Trace_ELBO
+<span style=color:#f92672>from</span> pyro.infer <span style=color:#f92672>import</span> Predictive
+
+
+np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>seed(<span style=color:#ae81ff>1</span>)
+pyro<span style=color:#f92672>.</span>set_rng_seed(<span style=color:#ae81ff>1</span>)
+</code></pre></div><p>また、下記のコードで生成されるToyデータセットを例に進めていきます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>create_linear_data</span>(w0<span style=color:#f92672>=</span><span style=color:#ae81ff>3.0</span>, w1<span style=color:#f92672>=</span><span style=color:#ae81ff>2.0</span>, sigma<span style=color:#f92672>=</span><span style=color:#ae81ff>5.0</span>, size<span style=color:#f92672>=</span><span style=color:#ae81ff>20</span>):
+    x <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>rand(size) <span style=color:#f92672>*</span> <span style=color:#ae81ff>10.0</span>
+    y <span style=color:#f92672>=</span> w0 <span style=color:#f92672>+</span> w1 <span style=color:#f92672>*</span> x
+    y <span style=color:#f92672>=</span> y <span style=color:#f92672>+</span> np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>normal(scale<span style=color:#f92672>=</span>sigma, size<span style=color:#f92672>=</span>x<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>])
+    <span style=color:#66d9ef>return</span> x, y
+
+x, y <span style=color:#f92672>=</span> create_linear_data()
+train <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor(np<span style=color:#f92672>.</span>array([x, y])<span style=color:#f92672>.</span>T, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>float)
+</code></pre></div><p>このコードで生成されるデータは(1)式において$w=2.0$、$b=3.0$とし、観測誤差が標準偏差5.0のガウス分布で発生するとしたデータになります。生成されたデータは以下のグラフのようになります。このToyデータセットをもとにベイズ線形回帰を行っていきましょう。</p><center><img src=toy_dataset_plot.png width=400></center><h3 id=確率モデルの構築>確率モデルの構築
+<a class=anchor href=#%e7%a2%ba%e7%8e%87%e3%83%a2%e3%83%87%e3%83%ab%e3%81%ae%e6%a7%8b%e7%af%89>#</a></h3><p>(6)式の確率モデルをPyroを用いて関数として定義します。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>model</span>(x, y):
+    w0 <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;w0&#34;</span>, dist<span style=color:#f92672>.</span>Normal(<span style=color:#ae81ff>0.</span>, <span style=color:#ae81ff>10.</span>))
+    w1 <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;w1&#34;</span>, dist<span style=color:#f92672>.</span>Normal(<span style=color:#ae81ff>0.</span>, <span style=color:#ae81ff>10.</span>))
+    sigma <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;sigma&#34;</span>, dist<span style=color:#f92672>.</span>Uniform(<span style=color:#ae81ff>0.</span>, <span style=color:#ae81ff>10.</span>))
+    mean <span style=color:#f92672>=</span> w0 <span style=color:#f92672>+</span> w1 <span style=color:#f92672>*</span> x
+    <span style=color:#66d9ef>with</span> pyro<span style=color:#f92672>.</span>plate(<span style=color:#e6db74>&#34;data&#34;</span>, len(x)):
+        pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;obs&#34;</span>, dist<span style=color:#f92672>.</span>Normal(mean, sigma), obs<span style=color:#f92672>=</span>y)
+</code></pre></div><p>ここで、w0とw1の事前確率分布は平均0で標準偏差10の正規分布、sigmaは0~10の値をとる一様分布としていることになります。</p><h3 id=変分関数を指定>変分関数を指定
+<a class=anchor href=#%e5%a4%89%e5%88%86%e9%96%a2%e6%95%b0%e3%82%92%e6%8c%87%e5%ae%9a>#</a></h3><p>次に変分関数を定義します。こちらも
+<a href=https://pyro-book.data-hacker.net/docs/pyro_vi/>Pyroでの変分推論</a>の節と同様、guide関数で実装することになります。今回は以下のコードのように実装します。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>guide</span>(x, y):
+    w0_loc <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#39;w0_loc&#39;</span>, torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>0.</span>))
+    w0_scale <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#39;w0_scale&#39;</span>, torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>1.</span>), constraint<span style=color:#f92672>=</span>constraints<span style=color:#f92672>.</span>positive)
+    w1_loc <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#39;w1_loc&#39;</span>, torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>0.0</span>))
+    w1_scale <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#39;w1_scale&#39;</span>, torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>1.0</span>), constraint<span style=color:#f92672>=</span>constraints<span style=color:#f92672>.</span>positive)
+    sigma_loc <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#39;sigma_loc&#39;</span>, torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>1.</span>), constraint<span style=color:#f92672>=</span>constraints<span style=color:#f92672>.</span>positive)
+    sigma_scale <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#39;sigma_scale&#39;</span>, torch<span style=color:#f92672>.</span>tensor(<span style=color:#ae81ff>0.5</span>), constraint<span style=color:#f92672>=</span>constraints<span style=color:#f92672>.</span>positive)
+    w0 <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;w0&#34;</span>, dist<span style=color:#f92672>.</span>Normal(w0_loc, w0_scale))
+    w1 <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;w1&#34;</span>, dist<span style=color:#f92672>.</span>Normal(w1_loc, w1_scale))
+    sigma <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#34;sigma&#34;</span>, dist<span style=color:#f92672>.</span>Normal(sigma_loc, sigma_scale))
+</code></pre></div><p>上記コードでは、今回推定したいパラメータ（潜在変数）$w_0$、$w_1$、$\sigma$の事後確率分布をそれぞれ正規分布と仮定していることになります。正規分布を特徴付けるパラメータは平均<code>loc</code>と標準偏差<code>scale</code>のため、以降の推論パートではELBO最大にするように潜在変数毎のこれら２つのパラメータを最適化することになります。そのため潜在変数それぞれの平均と標準偏差を<code>pyro.param</code>を用いて定義することにより、これらが最適化対象の変数であるということをPyroに伝えます。また標準偏差は正の値をとるため<code>constraint=constraints.positive</code>として正値のみをとるように制約条件を課していることに注意してください。また、繰り返しですが<code>guide</code>関数の引数は<code>model</code>関数と同一でないといけないことに注意してください。</p><h3 id=推論>推論
+<a class=anchor href=#%e6%8e%a8%e8%ab%96>#</a></h3><p>確率モデルと変分関数を定義したら、あとは推論を行っていきます。こちらも
+<a href=https://pyro-book.data-hacker.net/docs/pyro_vi/>変分推論を試す</a>と同様であることがわかるでしょう。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>optimizer <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>optim<span style=color:#f92672>.</span>Adam({<span style=color:#e6db74>&#34;lr&#34;</span>: <span style=color:#f92672>.</span><span style=color:#ae81ff>1</span>})
+svi <span style=color:#f92672>=</span> SVI(model, guide, optimizer, loss<span style=color:#f92672>=</span>Trace_ELBO())
+
+x, y <span style=color:#f92672>=</span> train[:, <span style=color:#ae81ff>0</span>], train[:, <span style=color:#ae81ff>1</span>]
+pyro<span style=color:#f92672>.</span>clear_param_store()
+num_iters <span style=color:#f92672>=</span> <span style=color:#ae81ff>5000</span>
+iter_nums <span style=color:#f92672>=</span> []
+losses <span style=color:#f92672>=</span> []
+<span style=color:#66d9ef>for</span> i <span style=color:#f92672>in</span> range(num_iters):
+    loss <span style=color:#f92672>=</span> svi<span style=color:#f92672>.</span>step(x, y)
+    iter_nums<span style=color:#f92672>.</span>append(i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>)
+    losses<span style=color:#f92672>.</span>append(loss)
+    <span style=color:#66d9ef>if</span> i <span style=color:#f92672>%</span> (num_iters <span style=color:#f92672>/</span> <span style=color:#ae81ff>10</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
+        <span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;Elbo loss: {}&#34;</span><span style=color:#f92672>.</span>format(loss))
+
+plt<span style=color:#f92672>.</span>plot(iter_nums, losses)
+plt<span style=color:#f92672>.</span>xscale(<span style=color:#e6db74>&#34;log&#34;</span>)
+plt<span style=color:#f92672>.</span>show()
+
+<span style=color:#75715e>## Output</span>
+<span style=color:#75715e># Elbo loss: 929.2532387375832</span>
+<span style=color:#75715e># Elbo loss: 62.93969136476517</span>
+<span style=color:#75715e># Elbo loss: 63.404844522476196</span>
+<span style=color:#75715e># Elbo loss: 64.26783436536789</span>
+<span style=color:#75715e># Elbo loss: 64.90034347772598</span>
+<span style=color:#75715e># Elbo loss: 63.357214510440826</span>
+<span style=color:#75715e># Elbo loss: 62.72878021001816</span>
+<span style=color:#75715e># Elbo loss: 73.45997166633606</span>
+<span style=color:#75715e># Elbo loss: 63.51271438598633</span>
+<span style=color:#75715e># Elbo loss: 63.471219420433044</span>
+</code></pre></div><center><img src=elbo_step.png width=400></center>
+出力されるプロットを確認すれば、ELBO（のマイナス値）は十分収束しているのが分かります。<h3 id=学習モデルの確認>学習モデルの確認
+<a class=anchor href=#%e5%ad%a6%e7%bf%92%e3%83%a2%e3%83%87%e3%83%ab%e3%81%ae%e7%a2%ba%e8%aa%8d>#</a></h3><p>学習結果のパラメータの内容は<code>pyro.get_param_store()</code>から参照可能です。最適化されたパラメータを出力してみましょう。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>for</span> name, value <span style=color:#f92672>in</span> pyro<span style=color:#f92672>.</span>get_param_store()<span style=color:#f92672>.</span>items():
+    <span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;{} = {:.3f}&#34;</span><span style=color:#f92672>.</span>format(name, pyro<span style=color:#f92672>.</span>param(name)<span style=color:#f92672>.</span>item()))
+
+<span style=color:#75715e>### Output</span>
+<span style=color:#75715e># w0_loc = 2.959</span>
+<span style=color:#75715e># w0_scale = 0.840</span>
+<span style=color:#75715e># w1_loc = 1.842</span>
+<span style=color:#75715e># w1_scale = 0.182</span>
+<span style=color:#75715e># sigma_loc = 4.156</span>
+<span style=color:#75715e># sigma_scale = 0.614</span>
+</code></pre></div><p>これらのパラメータから潜在変数の事後確率分布をプロットしてみましょう。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>x_range <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>arange(<span style=color:#ae81ff>0.0</span>, <span style=color:#ae81ff>6.0</span>, <span style=color:#ae81ff>0.01</span>)
+
+latent_vars <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#34;w0&#34;</span>, <span style=color:#e6db74>&#34;w1&#34;</span>, <span style=color:#e6db74>&#34;sigma&#34;</span>]
+
+<span style=color:#66d9ef>for</span> latent_var <span style=color:#f92672>in</span> latent_vars:
+    param_loc <span style=color:#f92672>=</span> latent_var <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;_loc&#34;</span>
+    param_scale <span style=color:#f92672>=</span> latent_var <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;_scale&#34;</span>
+    inferred_dist <span style=color:#f92672>=</span> dist<span style=color:#f92672>.</span>Normal(pyro<span style=color:#f92672>.</span>param(param_loc)<span style=color:#f92672>.</span>item(), pyro<span style=color:#f92672>.</span>param(param_scale)<span style=color:#f92672>.</span>item())
+    inferred_y <span style=color:#f92672>=</span> [inferred_dist<span style=color:#f92672>.</span>log_prob(torch<span style=color:#f92672>.</span>tensor([x]))<span style=color:#f92672>.</span>exp() <span style=color:#66d9ef>for</span> x <span style=color:#f92672>in</span> x_range]
+    plt<span style=color:#f92672>.</span>plot(x_range, inferred_y)
+
+plt<span style=color:#f92672>.</span>show()
+</code></pre></div><center><img src=posterior_dist.png width=400></center><p>学習の結果、潜在変数の事後分布はトイデータを作成した正解の値に近いところを中心にそれぞれ分布しているのが見て取れます。
+また、潜在変数の事後分布の平均値で回帰直線を引いてみると以下のようになります。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>plt<span style=color:#f92672>.</span>scatter(x, y)
+x_test <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>arange(<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>0.1</span>)
+w0_loc <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#34;w0_loc&#34;</span>)<span style=color:#f92672>.</span>item()
+w1_loc <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>param(<span style=color:#e6db74>&#34;w1_loc&#34;</span>)<span style=color:#f92672>.</span>item()
+y_test <span style=color:#f92672>=</span> w0_loc <span style=color:#f92672>+</span> w1_loc <span style=color:#f92672>*</span> x_test
+plt<span style=color:#f92672>.</span>plot(x_test, y_test)
+plt<span style=color:#f92672>.</span>show()
+</code></pre></div><center><img src=map_regression.png width=400></center><p>サンプルに沿った回帰直線が引けて学習が正常に動いているのが見て取れます。<blockquote class="book-hint info"><p><strong>Hint</strong></p><p>今回は変分関数としてガウス分布を指定しているため、事後分布の平均値はすなわち事後分布の最大点と等しくなります。つまり上の図はMAP推定をした場合の回帰直線を意味していることになります。</p></blockquote></p><p>また学習した潜在変数の事後分布からサンプリングを行うことも可能です。サンプリングには下記のコードのように<code>pyro.infer.Predictive</code>のクラスを利用すると便利です。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>X_range <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor(np<span style=color:#f92672>.</span>linspace(<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>50</span>))
+ 
+predictive <span style=color:#f92672>=</span> Predictive(model<span style=color:#f92672>=</span>model, guide<span style=color:#f92672>=</span>guide, num_samples<span style=color:#f92672>=</span><span style=color:#ae81ff>1000</span>, return_sites<span style=color:#f92672>=</span>[<span style=color:#e6db74>&#34;w0&#34;</span>, <span style=color:#e6db74>&#34;w1&#34;</span>, <span style=color:#e6db74>&#34;obs&#34;</span>])
+predict_samples <span style=color:#f92672>=</span> predictive<span style=color:#f92672>.</span>get_samples(X_range, None)
+</code></pre></div><p>このコードでは<code>X_range</code>変数に格納された$x=0\sim 10$の範囲の50の点それぞれに対して、指定された<code>model</code>と<code>guide</code>の関数に従って1000回サンプリングを行うことをしています。またサンプリングされる量は<code>return_sites</code>で指定された確率変数がサンプリングされます。</p><p>さて、これを利用して回帰直線の90%信頼区間をプロットしてみます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>sampled_vals <span style=color:#f92672>=</span> predict_samples[<span style=color:#e6db74>&#34;w0&#34;</span>] <span style=color:#f92672>+</span> predict_samples[<span style=color:#e6db74>&#34;w1&#34;</span>] <span style=color:#f92672>*</span> X_range
+mean_vals <span style=color:#f92672>=</span> sampled_vals<span style=color:#f92672>.</span>mean(<span style=color:#ae81ff>0</span>)
+percent05_vals <span style=color:#f92672>=</span> sampled_vals<span style=color:#f92672>.</span>kthvalue(int(sampled_vals<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>*</span> <span style=color:#ae81ff>0.05</span>), dim<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)[<span style=color:#ae81ff>0</span>]
+percent95_vals <span style=color:#f92672>=</span> sampled_vals<span style=color:#f92672>.</span>kthvalue(int(sampled_vals<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>*</span> <span style=color:#ae81ff>0.95</span>), dim<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)[<span style=color:#ae81ff>0</span>]
+
+plt<span style=color:#f92672>.</span>scatter(x, y)
+plt<span style=color:#f92672>.</span>plot(X_range, mean_vals, color<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;r&#39;</span>)
+plt<span style=color:#f92672>.</span>fill_between(X_range, percent05_vals, percent95_vals, color<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;r&#39;</span>, alpha<span style=color:#f92672>=</span><span style=color:#ae81ff>0.2</span>)
+</code></pre></div><p>2行目でサンプリングされた$w_0$,$w_1$をもとに目的変数$y$を計算しています。４と５行目で、これらサンプリングされた点から5%,95%パーセンタイル値を取得。結果をプロットしています。</p><center><img src=regression_line_90.png width=400></center><p>90%信頼区間の領域中に多くの観測値が入っていないのに注意してください。これは上図が<strong>回帰線の信頼区間</strong>をプロットしており観測誤差を考慮にいれていないことに起因します。</p><p>上図のような信頼区間の回帰線に観測誤差$\sigma$が加わる「観測値」はどの範囲に広がるのかを調べてみます。ここでは「観測値」の90%信頼区間をプロットしてみましょう。<code>model</code>関数内で観測誤差$\sigma$を含んだ観測値は<code>obs</code>変数として定義したのを思い出すと、<code>obs</code>変数のサンプリング値を利用すると目的の信頼区間が得られることが分かります。上記の回帰直線の信頼区間をプロットしたのと同様に以下のコードで観測値90%信頼区間がプロットできます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># 観測誤差も考慮したの90%信頼区間をプロット</span>
+sampled_vals <span style=color:#f92672>=</span> predict_samples[<span style=color:#e6db74>&#34;obs&#34;</span>]
+mean_vals <span style=color:#f92672>=</span> sampled_vals<span style=color:#f92672>.</span>mean(<span style=color:#ae81ff>0</span>)
+percent05_vals <span style=color:#f92672>=</span> sampled_vals<span style=color:#f92672>.</span>kthvalue(int(sampled_vals<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>*</span> <span style=color:#ae81ff>0.05</span>), dim<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)[<span style=color:#ae81ff>0</span>]
+percent95_vals <span style=color:#f92672>=</span> sampled_vals<span style=color:#f92672>.</span>kthvalue(int(sampled_vals<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>*</span> <span style=color:#ae81ff>0.95</span>), dim<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)[<span style=color:#ae81ff>0</span>]
+
+plt<span style=color:#f92672>.</span>scatter(x, y)
+plt<span style=color:#f92672>.</span>plot(X_range, mean_vals, color<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;g&#39;</span>)
+plt<span style=color:#f92672>.</span>fill_between(X_range, percent05_vals, percent95_vals, color<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;g&#39;</span>, alpha<span style=color:#f92672>=</span><span style=color:#ae81ff>0.2</span>)
+</code></pre></div><center><img src=obs_90.png width=400></center><p>多くの観測値が90%信頼区間に入っており、今回ベイズ学習した回帰モデルでデータセットが上手く表現出来ていることが見て取れます。このように学習したモデルが実際の観測値を再現できるかを確認することはモデルの有効性を評価・確認する上で重要です。</p></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#ベイズ線形回帰>ベイズ線形回帰</a><ul><li><a href=#１次元線形回帰>■１次元線形回帰</a><ul><li><a href=#確率モデルの構築>確率モデルの構築</a></li><li><a href=#変分関数を指定>変分関数を指定</a></li><li><a href=#推論>推論</a></li><li><a href=#学習モデルの確認>学習モデルの確認</a></li></ul></li></ul></li></ul></nav></div></aside></main></body></html>
