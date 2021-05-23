@@ -38,12 +38,17 @@ $$
 <img src="general_regression.png" width="400">
 </center>
 
-(2)式と事後確率の定義から$\mathbf{X}$と$\mathbf{Y}$組みが観測されたときの$\mathbf{w}$の事後分布は以下のように書けることが分かります。
+$\mathbf{X}$と$\mathbf{Y}$の組みが観測されたときの$\mathbf{w}$の事後分布は、事後確率の定義と(2)式から以下のように書けることが分かります。
 $$
-p(\mathbf{w}|\mathbf{X},\mathbf{Y})=\frac{p(\mathbf{X},\mathbf{Y},\mathbf{w})}{p(\mathbf{X})p(\mathbf{Y})}\propto p(\mathbf{w})\prod_{i=1}^{N}p(y_i|\mathbf{x}_i,\mathbf{w})\tag{3}
+\begin{align} 
+p(\mathbf{w}|\mathbf{X},\mathbf{Y})& =\frac{p(\mathbf{X},\mathbf{Y},\mathbf{w})}{p(\mathbf{X},\mathbf{Y})}\newline
+& =\frac{p(\mathbf{w})\prod_{i=1}^{N}p(y_i|\mathbf{x}_i,\mathbf{w})p(\mathbf{x}_i)}{p(\mathbf{Y}|\mathbf{X})p(\mathbf{X})}\newline
+& = \frac{p(\mathbf{w})\prod_{i=1}^{N}p(y_i|\mathbf{x}_i,\mathbf{w})}{p(\mathbf{Y}|\mathbf{X})}\tag{3}
+\end{align}
 $$
+ここで２行目から３行目はデータサンプル間の独立性から$p(\mathbf{X})=\prod_{i}p(\mathbf{x}_i)$と書けることを利用しています。
 
-この事後分布を求めるタスクがベイズ回帰です。
+このパラメータ$\mathbf{w}$の事後分布をデータから推定するタスクがベイズ回帰です。
 
 ## ■１次元線形回帰
 まずは回帰の最も簡単な例として１次元線形回帰を考えていきましょう。この場合(1)式の具体的な関数型として
@@ -72,6 +77,9 @@ $$
 (6)式の確率モデルをPyroを用いて記述し変分推定を行っていくところをみていきましょう。
 
 なお以降では下記のコードを実行されている前提で話を進めていきます。
+
+**※プログラムコードの全体は[Github](https://github.com/a-mitani/pyro_code_examples/blob/main/pyro_linear_regression.ipynb)上に公開しています。**
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
