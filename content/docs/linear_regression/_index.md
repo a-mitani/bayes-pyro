@@ -77,6 +77,9 @@ $$
 (6)式の確率モデルをPyroを用いて記述し変分推定を行っていくところをみていきましょう。
 
 なお以降では下記のコードを実行されている前提で話を進めていきます。
+
+**※プログラムコードの全体は[Github](https://github.com/a-mitani/pyro_code_examples/blob/main/pyro_linear_regression.ipynb)上に公開しています。**
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
