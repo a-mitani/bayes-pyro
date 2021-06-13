@@ -32,7 +32,7 @@ weight: 1
 我々は$p(\mathbf{w}|\mathbf{X})$を求めたいわけですが、この未知の確率分布がなんらかパラメトリックな関数$q(\mathbf{w};\boldsymbol{\alpha})$で表現できないかと考えます。ここで$\boldsymbol{\alpha}$は$q$の関数型を特徴づけるパラメータです[^norm]。そしてこの$\boldsymbol{\alpha}$を調整し$q(\mathbf{w};\boldsymbol{\alpha})$を本来求めたい確率分布$p(\mathbf{w}|\mathbf{X})$に近づけることで$p(\mathbf{w}|\mathbf{X})$を近似的に求めてやろうという方法が**変分近似**です。
 
 ここで$p(\mathbf{w}|\mathbf{X})$と近似関数$q(\mathbf{w};\boldsymbol{\alpha})$の類似度合いの指標としてKLダイバージェンスを採用すると変分近似は、
-$$ \boldsymbol{\alpha}_{opt.}=\underset{\boldsymbol{\alpha}}{\operatorname{argmax}} \operatorname{KL}(q(\mathbf{w};\boldsymbol{\alpha})||p(\mathbf{w}|\mathbf{X}))$$
+$$ \boldsymbol{\alpha}_{opt.}=\underset{\boldsymbol{\alpha}}{\operatorname{argmin}} \operatorname{KL}(q(\mathbf{w};\boldsymbol{\alpha})||p(\mathbf{w}|\mathbf{X}))$$
 の最適化問題として定式化できます。
 
 しかしKLダイバージェンスに未知の関数である$p(\mathbf{w}|\mathbf{X})$が入っているため、このままでは$q_{opt.}$を求めることはできません。そこでこのKLダイバージェンスの最小化問題を、数学的なトリックを使って別の計算可能な量の最大化問題に書き換えることで間接的にKLダイバージェンスを最小化する関数を求めることを行います。ではどのようにするのでしょうか？
