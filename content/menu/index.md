@@ -10,5 +10,6 @@ headless: true
 - [Pyroでの変分推論]({{< relref "/docs/pyro_vi" >}})
 - [MAP推定と最尤推定]({{< relref "/docs/mle_map" >}})
 - [ベイズ線形回帰]({{< relref "/docs/linear_regression" >}})
+- [モデル選択:周辺尤度最大化]({{< relref "/docs/model_selection_01" >}})
 <br/>
 <br/>
