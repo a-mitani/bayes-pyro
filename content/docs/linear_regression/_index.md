@@ -59,14 +59,14 @@ $$
 $$
 \epsilon \sim \mathcal{N}(\epsilon|0, \sigma) \tag{5}
 $$
-と仮定すると、(4)、(5)式をまとめることで(2)式の中の$p(y_i|\mathbf{x}_i,\mathbf{w})$は具体的に
+と仮定すると、(4)、(5)式をまとめることで
 $$
-p(y_i|\mathbf{x}_i,\mathbf{w})=\mathcal{N}(y_i|w_0+w_1 x_i, \sigma)\tag{5}
+p(y_i|x_i,w_0, w_1, \sigma)=\mathcal{N}(y_i|w_0+w_1 x_i, \sigma)\tag{5}
 $$
 と書けることが分かります。
 ここで観測誤差の広がり度合いを示す$\sigma$も推定したいパラメータとすると(2)式は
 $$
-p(\mathbf{X},\mathbf{Y},w_0,w_1,\sigma)=p(w_0)p(w_1)p(\sigma)\prod_i\mathcal{N}(y_i|w_0+w_1 x_i, \sigma)p(x_i)\tag{6}
+p(\mathbf{X},\mathbf{Y},w_0,w_1,\sigma)=p(w_0)p(w_1)p(\sigma)\prod_{i=1}^N\mathcal{N}(y_i|w_0+w_1 x_i, \sigma)p(x_i)\tag{6}
 $$
 という具体的な形に書くことができます。またこの同時確率をグラフィカルモデルで記述すれば以下の図のようになります。
 <center>
