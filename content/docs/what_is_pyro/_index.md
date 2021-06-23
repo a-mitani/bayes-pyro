@@ -20,10 +20,16 @@ pip install pyro-ppl
 コマンドによりPyroのインストールします。
 
 ## Google ColabratoryでのPyroのインストール
-以降の本書のサンプルコードは全て[Google Colabratory](https://colab.research.google.com/notebooks/welcome.ipynb?hl=ja)上で動作させることを前提としています。ColabratoryはPytorchは事前にインストールされているため、下記の「!」を冒頭につけたpipコマンドをセル上で動かすだけででPyroをインストールすることが可能です。
+以降の本書のサンプルコードは全て[Google Colabratory](https://colab.research.google.com/notebooks/welcome.ipynb?hl=ja)上で動作させることを前提としています。ColabratoryにはPytorchが事前にインストールされているため、Pyroのみインストールする必要があります。Colabratoryでは下記のコード例のように「!」を冒頭につけてpipコマンドをセル上で動かすだけででPyroをインストールすることが可能です。
 ```python
 !pip install pyro-ppl
 ```
+
+{{< hint info >}}
+**インストール時のログの非表示**  
+`!pip install pyro-ppl -q`というように、`-q`オプションを付けてインストールを実行することでインストール時の雑多なログ出力を止めることが出来ます。{{< /hint >}}
+
+以上で、Pyroを利用する環境が整いました。
 次節以降で、ベイズ学習の基礎とPyroを用いた実装方法を学んでいきます。
 
 [^ppl]: 「プログラミング言語」と名乗ってはいますが、Pythonで動作するライブラリの位置付けなので、確率的プログラミングをするための「フレームワーク」と考えた方がわかりやすいかもしれません。
