@@ -11,5 +11,6 @@ headless: true
 - [MAP推定と最尤推定]({{< relref "/docs/mle_map" >}})
 - [ベイズ線形回帰]({{< relref "/docs/linear_regression" >}})
 - [モデル選択:周辺尤度最大化]({{< relref "/docs/model_selection_01" >}})
+- [参考文献]({{< relref "/docs/refs" >}})
 <br/>
 <br/>
