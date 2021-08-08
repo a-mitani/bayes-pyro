@@ -3,11 +3,11 @@
 normal_1d = dist.Normal(0.0, 1.0) print(normal_1d.sample()) ##Output # tensor(-0.6117) 多次元の確率分布も同様です。例えば２次元の正規分布関数からは２次元のサンプリング値が出力されます。
 normal_2d = dist.MultivariateNormal(torch.zeros(2), torch.eye(2)) print(normal_2d.sample()) ## Output # tensor([2.5499, 0.2041]) また、sample関数にtorch.Sizeを引数に渡すことで指定のshapeでサンプリングすることができます。
 normal_1d = dist.Normal(0.0, 1.0) samples = normal_1d.sample(torch.Size([2, 3])) print(samples) ## Output tensor([[ 0.7036, 2.2816, 0.5640], [ 0.3072, -1.0661, -1.6618]]) ここでサンプリングされた値間は独立同分布（IID）の関係にあることに注意してください。
-前節のように確率モデリングをする場合、後々の推論などで確率変数の名前をつけると扱いやすいです。その場合はpyro.sample関数を用いて確率変数に名前をつけた上でサンプリングを行うことが可能です。下の例ではベルヌーイ分布の分布をもつ確率変数Xからの実現値が変数xに格納される動作になります。
-x = pyro.sample('X', dist.Bernoulli(0.5)) print(x) ## Output # tensor(1."><meta name=theme-color content="#FFFFFF"><meta property="og:title" content="確率分布の取り扱い"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://pyro-book.data-hacker.net/docs/dist_basic/"><title>確率分布の取り扱い | Pyroで実践するベイズ機械学習</title><link rel=manifest href=https://pyro-book.data-hacker.net/manifest.json><link rel=icon href=https://pyro-book.data-hacker.net/favicon.png type=image/x-icon><link rel=stylesheet href=https://pyro-book.data-hacker.net/book.min.6c7c6446dfdee7c8c933e9bbc6e80ee3ed6c913b2a59519f2092c3c6a9d63e55.css integrity="sha256-bHxkRt/e58jJM+m7xugO4+1skTsqWVGfIJLDxqnWPlU="><script defer src=https://pyro-book.data-hacker.net/en.search.min.95d344ac1e77adc21bb402b1529a7be64075da5ed47936b3e33f06ed7135f2be.js integrity="sha256-ldNErB53rcIbtAKxUpp75kB12l7UeTaz4z8G7XE18r4="></script><script defer src=https://pyro-book.data-hacker.net/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js integrity="sha256-dKi7B/C+6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ="></script><link rel=alternate type=application/rss+xml href=https://pyro-book.data-hacker.net/docs/dist_basic/index.xml title=Pyroで実践するベイズ機械学習></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
-<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a href=https://pyro-book.data-hacker.net/><span>Pyroで実践するベイズ機械学習</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=https://pyro-book.data-hacker.net/docs/what_is_pyro/>Pyroとは</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_modeling/>Pyroによる確率モデリング</a></li><li><a href=https://pyro-book.data-hacker.net/docs/dist_basic/ class=active>確率分布の取り扱い</a></li><li><a href=https://pyro-book.data-hacker.net/docs/bayes_learning_basic/>ベイズ学習の枠組み</a></li><li><a href=https://pyro-book.data-hacker.net/docs/vi_basic/>変分推論の基礎</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_vi/>Pyroでの変分推論</a></li><li><a href=https://pyro-book.data-hacker.net/docs/mle_map/>MAP推定と最尤推定</a></li><li><a href=https://pyro-book.data-hacker.net/docs/linear_regression/>ベイズ線形回帰</a></li><li><a href=https://pyro-book.data-hacker.net/docs/model_selection_01/>モデル選択:周辺尤度最大化</a><br><br></li></ul><ul><li><a href=https://github.com/a-mitani/bayes-pyro target=_blank rel=noopener>Github</a></li></ul></nav><script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=https://pyro-book.data-hacker.net/svg/menu.svg class=book-icon alt=Menu></label>
+前節のように確率モデリングをする場合、後々の推論などで確率変数の名前をつけると扱いやすいです。その場合はpyro.sample関数を用いて確率変数に名前をつけた上でサンプリングを行うことが可能です。下の例では変数名&#34;X&#34;と名付けられたベルヌーイ分布の確率変数から実現値をサンプルし、変数xに格納する動作になります。
+x = pyro.sample('X', dist.Bernoulli(0.5)) print(x) ## Output # tensor(1."><meta name=theme-color content="#FFFFFF"><meta property="og:title" content="確率分布の取り扱い"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://pyro-book.data-hacker.net/docs/dist_basic/"><title>確率分布の取り扱い | Pyroで実践するベイズ機械学習</title><link rel=manifest href=https://pyro-book.data-hacker.net/manifest.json><link rel=icon href=https://pyro-book.data-hacker.net/favicon.png type=image/x-icon><link rel=stylesheet href=https://pyro-book.data-hacker.net/book.min.6c7c6446dfdee7c8c933e9bbc6e80ee3ed6c913b2a59519f2092c3c6a9d63e55.css integrity="sha256-bHxkRt/e58jJM+m7xugO4+1skTsqWVGfIJLDxqnWPlU="><script defer src=https://pyro-book.data-hacker.net/en.search.min.244ff5c0cf4172d1977c4cce168b452b74b18e1ab6f4b363258381f2b199e344.js integrity="sha256-JE/1wM9BctGXfEzOFotFK3Sxjhq29LNjJYOB8rGZ40Q="></script><script defer src=https://pyro-book.data-hacker.net/sw.min.74a8bb07f0bee86d6bb9a2750f073f14d93c7e4512f28860370cfd879e9719b4.js integrity="sha256-dKi7B/C+6G1ruaJ1Dwc/FNk8fkUS8ohgNwz9h56XGbQ="></script><link rel=alternate type=application/rss+xml href=https://pyro-book.data-hacker.net/docs/dist_basic/index.xml title=Pyroで実践するベイズ機械学習></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a href=https://pyro-book.data-hacker.net/><span>Pyroで実践するベイズ機械学習</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=https://pyro-book.data-hacker.net/docs/what_is_pyro/>Pyroとは</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_modeling/>Pyroによる確率モデリング</a></li><li><a href=https://pyro-book.data-hacker.net/docs/dist_basic/ class=active>確率分布の取り扱い</a></li><li><a href=https://pyro-book.data-hacker.net/docs/bayes_learning_basic/>ベイズ学習の枠組み</a></li><li><a href=https://pyro-book.data-hacker.net/docs/vi_basic/>変分推論の基礎</a></li><li><a href=https://pyro-book.data-hacker.net/docs/pyro_vi/>Pyroでの変分推論</a></li><li><a href=https://pyro-book.data-hacker.net/docs/mle_map/>MAP推定と最尤推定</a></li><li><a href=https://pyro-book.data-hacker.net/docs/linear_regression/>ベイズ線形回帰</a></li><li><a href=https://pyro-book.data-hacker.net/docs/model_selection_01/>モデル選択:周辺尤度最大化</a></li><li><a href=https://pyro-book.data-hacker.net/docs/refs/>参考文献</a><br><br></li></ul><ul><li><a href=https://github.com/a-mitani/bayes-pyro target=_blank rel=noopener>Github</a></li></ul></nav><script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=https://pyro-book.data-hacker.net/svg/menu.svg class=book-icon alt=Menu></label>
 <strong>確率分布の取り扱い</strong>
-<label for=toc-control><img src=https://pyro-book.data-hacker.net/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#確率分布の取り扱い>確率分布の取り扱い</a><ul><li><a href=#-実現値のサンプリング>■ 実現値のサンプリング</a></li><li><a href=#-確率密度の取得>■ 確率（密度）の取得</a></li><li><a href=#-batch_shapeとevent_shape>■ batch_shapeとevent_shape</a><ul><li><a href=#batch_shape>batch_shape</a></li><li><a href=#event_shape>event_shape</a></li><li><a href=#従属変数化-to_event>従属変数化 <code>to_event()</code></a></li></ul></li><li><a href=#-ベイズ学習へ>■ ベイズ学習へ</a></li></ul></li></ul></nav></aside></header><article class=markdown><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type=text/x-mathjax-config>
+<label for=toc-control><img src=https://pyro-book.data-hacker.net/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#確率分布の取り扱い>確率分布の取り扱い</a><ul><li><a href=#-実現値のサンプリング>■ 実現値のサンプリング</a></li><li><a href=#-確率密度の取得>■ 確率（密度）の取得</a></li><li><a href=#-batch_shapeとevent_shape>■ batch_shapeとevent_shape</a><ul><li><a href=#-batch_shape>▼ batch_shape</a></li><li><a href=#-event_shape>▼ event_shape</a></li><li><a href=#-従属変数化-to_event>▼ 従属変数化 <code>to_event()</code></a></li></ul></li><li><a href=#-ベイズ学習へ>■ ベイズ学習へ</a></li></ul></li></ul></nav></aside></header><article class=markdown><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script><script type=text/x-mathjax-config>
  MathJax.Hub.Config({
  tex2jax: {
  inlineMath: [['$', '$'] ],
@@ -33,13 +33,13 @@ samples <span style=color:#f92672>=</span> normal_1d<span style=color:#f92672>.<
 <span style=color:#75715e>## Output</span>
 tensor([[ <span style=color:#ae81ff>0.7036</span>,  <span style=color:#ae81ff>2.2816</span>,  <span style=color:#ae81ff>0.5640</span>],
         [ <span style=color:#ae81ff>0.3072</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1.0661</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1.6618</span>]])
-</code></pre></div><p>ここでサンプリングされた値間は<strong>独立同分布（IID）の関係</strong>にあることに注意してください。</p><p>前節のように確率モデリングをする場合、後々の推論などで確率変数の名前をつけると扱いやすいです。その場合は<code>pyro.sample</code>関数を用いて確率変数に名前をつけた上でサンプリングを行うことが可能です。下の例ではベルヌーイ分布の分布をもつ確率変数<code>X</code>からの実現値が変数<code>x</code>に格納される動作になります。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>x <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#39;X&#39;</span>, dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>0.5</span>))
+</code></pre></div><p>ここでサンプリングされた値間は<strong>独立同分布（IID）の関係</strong>にあることに注意してください。</p><p>前節のように確率モデリングをする場合、後々の推論などで確率変数の名前をつけると扱いやすいです。その場合は<code>pyro.sample</code>関数を用いて確率変数に名前をつけた上でサンプリングを行うことが可能です。下の例では変数名"X"と名付けられたベルヌーイ分布の確率変数から実現値をサンプルし、変数<code>x</code>に格納する動作になります。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>x <span style=color:#f92672>=</span> pyro<span style=color:#f92672>.</span>sample(<span style=color:#e6db74>&#39;X&#39;</span>, dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>0.5</span>))
 <span style=color:#66d9ef>print</span>(x)
 
 <span style=color:#75715e>## Output</span>
 <span style=color:#75715e># tensor(1.)</span>
 </code></pre></div><h2 id=-確率密度の取得>■ 確率（密度）の取得
-<a class=anchor href=#-%e7%a2%ba%e7%8e%87%e5%af%86%e5%ba%a6%e3%81%ae%e5%8f%96%e5%be%97>#</a></h2><p>確率分布から指定された実現値がとる確率を計算するには<code>log_prob</code>関数を利用します。これは対数確率密度を計算するので生の確率密度値を計算する場合はこの出力に対して<code>np.exp()</code>を計算します。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>bel_dist <span style=color:#f92672>=</span> dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>0.6</span>)
+<a class=anchor href=#-%e7%a2%ba%e7%8e%87%e5%af%86%e5%ba%a6%e3%81%ae%e5%8f%96%e5%be%97>#</a></h2><p>各確率分布において、指定された値が実現値となる確率を計算するには<code>log_prob()</code>関数を利用します。これは対数確率密度を計算するので生の確率密度値を計算する場合はこの出力に対して<code>np.exp()</code>を計算します。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>bel_dist <span style=color:#f92672>=</span> dist<span style=color:#f92672>.</span>Bernoulli(<span style=color:#ae81ff>0.6</span>)
 x <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor([<span style=color:#ae81ff>1.0</span>, <span style=color:#ae81ff>0.0</span>])
 log_prob_x <span style=color:#f92672>=</span> bel_dist<span style=color:#f92672>.</span>log_prob(x)
 <span style=color:#66d9ef>print</span>(np<span style=color:#f92672>.</span>exp(log_prob_x))
@@ -47,15 +47,14 @@ log_prob_x <span style=color:#f92672>=</span> bel_dist<span style=color:#f92672>
 <span style=color:#75715e>## Output</span>
 <span style=color:#75715e># tensor([0.6000, 0.4000])</span>
 </code></pre></div><h2 id=-batch_shapeとevent_shape>■ batch_shapeとevent_shape
-<a class=anchor href=#-batch_shape%e3%81%a8event_shape>#</a></h2><h3 id=batch_shape>batch_shape
-<a class=anchor href=#batch_shape>#</a></h3><p>確率分布のパラメータとして複数の値をTensorとして与えることで、同一の分布だが異なるパラメータで特徴付けられた複数の分布を同時に定義することが出来ます。例えば下記のコードでは</p><ul><li>平均: 0.0、標準偏差: 1.0</li><li>平均: 3.0、標準偏差: 0.5</li></ul><p>の２つの分布を１つの確率分布変数として定義していいます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>locs <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor([<span style=color:#ae81ff>0.0</span>, <span style=color:#ae81ff>3.0</span>])
+<a class=anchor href=#-batch_shape%e3%81%a8event_shape>#</a></h2><h3 id=-batch_shape>▼ batch_shape
+<a class=anchor href=#-batch_shape>#</a></h3><p>確率分布のパラメータを<code>Tensor</code>型で複数与えることで、同種の分布だが異なるパラメータで特徴付けられた複数の分布を同時に定義することが出来ます。例えば下記のコードでは</p><ul><li>平均: 0.0、標準偏差: 1.0</li><li>平均: 3.0、標準偏差: 0.5</li></ul><p>の２つの分布を１つの確率分布変数として定義していいます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>locs <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor([<span style=color:#ae81ff>0.0</span>, <span style=color:#ae81ff>3.0</span>])
 sds <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor([<span style=color:#ae81ff>1.0</span>, <span style=color:#ae81ff>0.5</span>])
 normal_1d_cond <span style=color:#f92672>=</span> dist<span style=color:#f92672>.</span>Normal(locs, sds)
 <span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;batch_shape =&#34;</span>, normal_1d_cond<span style=color:#f92672>.</span>batch_shape)
-
-<span style=color:#75715e>## Output</span>
-<span style=color:#75715e># batch_shape = torch.Size([2])</span>
-</code></pre></div><p>ここで<code>batch_shape</code>という属性が出てきました。これは確率分布変数に定義された分布の種類の数を示しており、上記例では二種類のパラメータを指定しているので「2」になります。また以下のコードのように<code>sample</code>関数を呼ぶことにより、定義された２つのパラメータでの確率分布の実現値がサンプリングされます。ここで各パラメータのサンプル値<code>samples[:, 0]</code>、<code>samples[:, 1]</code>のそれぞれ独立同分布であり、一方でお互いは独立ではあるが同分布ではないことになります。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>samples <span style=color:#f92672>=</span> normal_1d_cond<span style=color:#f92672>.</span>sample(torch<span style=color:#f92672>.</span>Size([<span style=color:#ae81ff>10000</span>]))
+</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e>## Output</span>
+&gt; batch_shape <span style=color:#f92672>=</span> torch.Size<span style=color:#f92672>([</span>2<span style=color:#f92672>])</span>
+</code></pre></div><p>ここで<code>batch_shape</code>という属性が出てきました。これは確率分布変数に定義された分布の種類の数を示しており、上記例では二種類のパラメータを指定しているので「2」になります。</p><p>また上記コードのように定義された確率分布から<code>sample()</code>関数でサンプリングすると、定義に用いられた複数のパラメータでの確率分布の実現値がサンプリングされます。ここで<code>samples[:, 0]</code>は平均:0.0、標準偏差1.0、<code>samples[:, 1]</code>は平均:3.0、標準偏差0.5の正規分布から、それぞれ独立にサンプリングされた値が格納されることになります。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>samples <span style=color:#f92672>=</span> normal_1d_cond<span style=color:#f92672>.</span>sample(torch<span style=color:#f92672>.</span>Size([<span style=color:#ae81ff>10000</span>]))
 <span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;samples.shape =&#34;</span>, samples<span style=color:#f92672>.</span>shape)
 
 plt<span style=color:#f92672>.</span>hist(samples[:, <span style=color:#ae81ff>0</span>], alpha<span style=color:#f92672>=</span><span style=color:#ae81ff>0.3</span>)
@@ -63,54 +62,63 @@ plt<span style=color:#f92672>.</span>hist(samples[:, <span style=color:#ae81ff>1
 plt<span style=color:#f92672>.</span>xlabel(<span style=color:#e6db74>&#34;X&#34;</span>)
 plt<span style=color:#f92672>.</span>ylabel(<span style=color:#e6db74>&#34;Frequency&#34;</span>)
 plt<span style=color:#f92672>.</span>show()
-
-<span style=color:#75715e>## Output</span>
-<span style=color:#75715e># samples.shape = torch.Size([10000, 2])</span>
+</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e>## Output</span>
+&gt; samples.shape <span style=color:#f92672>=</span> torch.Size<span style=color:#f92672>([</span>10000, 2<span style=color:#f92672>])</span>
 </code></pre></div><center><img src=hist.png width=400></center><p>また以下のように確率密度を求めた場合も、各パラメータでの確率密度が出力されます。最後の行のprint文に示したように<strong>確率密度のshapeは確率分布変数の<code>batch_shape</code>と等しい</strong>ことに注意してください。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>log_prob_x <span style=color:#f92672>=</span> normal_1d_cond<span style=color:#f92672>.</span>log_prob(torch<span style=color:#f92672>.</span>Tensor([<span style=color:#ae81ff>1.0</span>]))
 <span style=color:#66d9ef>print</span>(np<span style=color:#f92672>.</span>exp(log_prob_x))
 <span style=color:#66d9ef>print</span>(log_prob_x<span style=color:#f92672>.</span>shape <span style=color:#f92672>==</span> normal_1d_cond<span style=color:#f92672>.</span>batch_shape)
-
-<span style=color:#75715e>## Output</span>
-<span style=color:#75715e># tensor([0.2420, 0.0003])</span>
-<span style=color:#75715e># True</span>
-</code></pre></div><h3 id=event_shape>event_shape
-<a class=anchor href=#event_shape>#</a></h3><p>二次元正規分布を考えてみます。この分布の<code>event_shape</code>を出力すると「２」となります。この<code>event_shape</code>とは従属な変数の数を示しています。つまり２つの変数が決まって初めて１つの確率密度が求まる分布であることを示しています（以下コードの最後の<code>print</code>文）。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>normal_2d <span style=color:#f92672>=</span> dist<span style=color:#f92672>.</span>MultivariateNormal(torch<span style=color:#f92672>.</span>zeros(<span style=color:#ae81ff>2</span>), torch<span style=color:#f92672>.</span>eye(<span style=color:#ae81ff>2</span>))
-<span style=color:#66d9ef>print</span>(normal_2d<span style=color:#f92672>.</span>event_shape)
+</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e>## Output</span>
+&gt; tensor<span style=color:#f92672>([</span>0.2420, 0.0003<span style=color:#f92672>])</span>
+&gt; True
+</code></pre></div><h3 id=-event_shape>▼ event_shape
+<a class=anchor href=#-event_shape>#</a></h3><p>Pyroの確率分布には<code>event_shape</code>という属性が設定されます。この属性は確率分布の従属変数の数（＝サンプルされる実現値の次元数）が格納されます。</p><p>具体例として二次元正規分布を考えてみます。この分布から実現値をサンプルすると当然ながら２次元ベクトルが出力され（出力1行目）、<code>event_shape</code>属性も同じく<code>２</code>となっているのがわかります（出力2行目）。また確率密度は２つの確率変数の値によって定まるため、今回の場合２次元のベクトルを与えて初めて１つの確率密度が求まることがわかります。（出力3行目）。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>normal_2d <span style=color:#f92672>=</span> dist<span style=color:#f92672>.</span>MultivariateNormal(torch<span style=color:#f92672>.</span>zeros(<span style=color:#ae81ff>2</span>), torch<span style=color:#f92672>.</span>eye(<span style=color:#ae81ff>2</span>))
 sampled <span style=color:#f92672>=</span> normal_2d<span style=color:#f92672>.</span>sample()
 <span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;(x, y)=&#34;</span>, sampled)
+<span style=color:#66d9ef>print</span>(normal_2d<span style=color:#f92672>.</span>event_shape)
 <span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;P(x, y) =&#34;</span>, np<span style=color:#f92672>.</span>exp(normal_2d<span style=color:#f92672>.</span>log_prob(sampled)))
-
-<span style=color:#75715e>## Output</span>
-<span style=color:#75715e># torch.Size([2])</span>
-<span style=color:#75715e># (x, y)= tensor([1.9866, 0.4698])</span>
-<span style=color:#75715e># P(x, y) = tensor(0.0198)</span>
-</code></pre></div><h3 id=従属変数化-to_event>従属変数化 <code>to_event()</code>
-<a class=anchor href=#%e5%be%93%e5%b1%9e%e5%a4%89%e6%95%b0%e5%8c%96-to_event>#</a></h3><p>Pyroでは<code>to_event()</code>関数を用いて、単変数確率分布を組み合わせて多変数確率分布に変形することが可能です。
-以下のようにベルヌーイ分布を定義します。2×2の計4つのパラメータの分布を指定して流ので<code>batch_shape</code>も2×2になります。当然、確率分布はそれぞれの確率分布で計算されます。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>ps <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>Tensor([[<span style=color:#ae81ff>0.3</span>, <span style=color:#ae81ff>0.8</span>], [<span style=color:#ae81ff>0.1</span>, <span style=color:#ae81ff>1.0</span>]])
+</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>## Output
+&gt; (x, y)= tensor([-0.5593,  0.4162])
+&gt; torch.Size([2])
+&gt; P(x, y) = tensor(0.1248)
+</code></pre></div><h3 id=-従属変数化-to_event>▼ 従属変数化 <code>to_event()</code>
+<a class=anchor href=#-%e5%be%93%e5%b1%9e%e5%a4%89%e6%95%b0%e5%8c%96-to_event>#</a></h3><p>Pyroでは<code>to_event()</code>関数を用いて、１次元確率分布を組み合わせて多次元確率分布を定義することが可能です。
+以下のようにベルヌーイ分布を定義します。2×2の計4つのパラメータの分布を指定してるため<code>batch_shape</code>は2×2になります（出力1行目）。当然、確率分布はそれぞれの確率分布で計算されています（出力2行目）。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>ps <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>Tensor([[<span style=color:#ae81ff>0.3</span>, <span style=color:#ae81ff>0.8</span>], [<span style=color:#ae81ff>0.1</span>, <span style=color:#ae81ff>1.0</span>]])
 bern_dist <span style=color:#f92672>=</span> dist<span style=color:#f92672>.</span>Bernoulli(ps)
 <span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;bern_dist.batch_shape =&#34;</span>, bern_dist<span style=color:#f92672>.</span>batch_shape)
-<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;bern_dist.event_shape =&#34;</span>, bern_dist<span style=color:#f92672>.</span>event_shape)
 
+<span style=color:#75715e># 2×2=4つの異なるパラメータの確率分布それぞれのP(X=1)を計算</span>
 val <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>Tensor([<span style=color:#ae81ff>1.0</span>])
-<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;P(x=1) =&#34;</span>, np<span style=color:#f92672>.</span>exp(bern_dist<span style=color:#f92672>.</span>log_prob(val)))
-
-<span style=color:#75715e>## </span>
-<span style=color:#75715e># bern_dist.batch_shape = torch.Size([2, 2])</span>
-<span style=color:#75715e># bern_dist.event_shape = torch.Size([])</span>
-<span style=color:#75715e># P(x=1) = tensor([[0.3000, 0.8000],</span>
-<span style=color:#75715e>#         [0.1000, 1.0000]])</span>
+<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;P(X=1) =&#34;</span>, np<span style=color:#f92672>.</span>exp(bern_dist<span style=color:#f92672>.</span>log_prob(val)))
+</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>## Output
+&gt; bern_dist.batch_shape = torch.Size([2, 2])
+&gt; bern_dist.event_shape = torch.Size([])
+&gt; P(x=1) = tensor([[0.3000, 0.8000],
+&gt;         [0.1000, 1.0000]])
 </code></pre></div><p>この確率分布変数に対して<code>to_event()</code>を適用します。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>bern_dist2 <span style=color:#f92672>=</span> bern_dist<span style=color:#f92672>.</span>to_event(<span style=color:#ae81ff>1</span>)
-<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;bern_dist2.batch_shape =&#34;</span>, bern_dist<span style=color:#f92672>.</span>batch_shape)
-<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;bern_dist2.event_shape =&#34;</span>, bern_dist<span style=color:#f92672>.</span>event_shape)
+<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;bern_dist2.batch_shape =&#34;</span>, bern_dist2<span style=color:#f92672>.</span>batch_shape)
+<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;bern_dist2.event_shape =&#34;</span>, bern_dist2<span style=color:#f92672>.</span>event_shape)
 
 val <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>Tensor([<span style=color:#ae81ff>1.0</span>])
-<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;P(x=1) =&#34;</span>, np<span style=color:#f92672>.</span>exp(bern_dist2<span style=color:#f92672>.</span>log_prob(val)))
-
-<span style=color:#75715e>## Output</span>
-<span style=color:#75715e># bern_dist2.batch_shape = torch.Size([2, 2])</span>
-<span style=color:#75715e># bern_dist2.event_shape = torch.Size([])</span>
-<span style=color:#75715e># P(x=1) = tensor([0.2400, 0.1000])</span>
-</code></pre></div><p>ここで<code>.to_event(1)</code>の引数<code>1</code>は<code>batch_shape</code>の右から１つ目だけを従属化するという指定になります。</p><h2 id=-ベイズ学習へ>■ ベイズ学習へ
+<span style=color:#66d9ef>print</span>(<span style=color:#e6db74>&#34;P(X=1) =&#34;</span>, np<span style=color:#f92672>.</span>exp(bern_dist2<span style=color:#f92672>.</span>log_prob(val)))
+</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>## Output
+&gt; bern_dist2.batch_shape = torch.Size([2])
+&gt; bern_dist2.event_shape = torch.Size([2])
+&gt; P(X=1) = tensor([0.2400, 0.1000])
+</code></pre></div><p>ここで<code>.to_event(1)</code>の引数<code>1</code>は<code>batch_shape</code>の右から１つ目（２つ目の次元）だけを従属化するという指定になります。</p><p>つまり今回の場合、
+$$
+\begin{bmatrix}
+P(X) = Bern(X|\mu=0.3) & P(X) = Bern(X|\mu=0.8) \newline
+P(X) = Bern(X|\mu=0.1) & P(X) = Bern(X|\mu=1.0)
+\end{bmatrix}
+$$
+の４つの確率分布を定義しておき、<code>to_event(1)</code>により上記の同一行の確率分布をまとめて（従属変数化）
+$$
+\begin{bmatrix}
+P(X, Y) = Bern(X|\mu=0.3) * Bern(Y|\mu=0.8) \newline
+P(X, Y) = Bern(X|\mu=0.1) * Bern(Y|\mu=1.0)
+\end{bmatrix}
+$$
+の２次元の確率分布を２つ定義することを行っていることになります。</p><h2 id=-ベイズ学習へ>■ ベイズ学習へ
 <a class=anchor href=#-%e3%83%99%e3%82%a4%e3%82%ba%e5%ad%a6%e7%bf%92%e3%81%b8>#</a></h2><p>ここまででPyroを用いて対象の事象に合わせた確率モデル、いわゆる生成モデルを定義することを行ってきました。ベイズ学習ではこの確率モデルに観測されたデータを組み合わせることで、未知のパラメータを学習・推論することになります。例えば、前節の赤玉白玉問題の場合、取り出された玉の色のデータをもとに袋の中の赤玉の数を推定していくことを行います。</p><p>Pyroを用いてベイズ学習を実装していく前に、必要最小限のベイズ学習の知識を復習していきましょう。</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>つまり
 <a href=https://pytorch.org/docs/master/distributions.html#torch.distributions.distribution.Distribution><code>torch.distributions.distribution.Distribution</code>クラス</a>と、
-<a href=https://docs.pyro.ai/en/dev/distributions.html#pyro.distributions.torch_distribution.TorchDistributionMixin><code>TorchDistributionMixin</code></a>の多重継承サブクラスとして実装されています。 <a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#確率分布の取り扱い>確率分布の取り扱い</a><ul><li><a href=#-実現値のサンプリング>■ 実現値のサンプリング</a></li><li><a href=#-確率密度の取得>■ 確率（密度）の取得</a></li><li><a href=#-batch_shapeとevent_shape>■ batch_shapeとevent_shape</a><ul><li><a href=#batch_shape>batch_shape</a></li><li><a href=#event_shape>event_shape</a></li><li><a href=#従属変数化-to_event>従属変数化 <code>to_event()</code></a></li></ul></li><li><a href=#-ベイズ学習へ>■ ベイズ学習へ</a></li></ul></li></ul></nav></div></aside></main></body></html>
+<a href=https://docs.pyro.ai/en/dev/distributions.html#pyro.distributions.torch_distribution.TorchDistributionMixin><code>TorchDistributionMixin</code></a>の多重継承サブクラスとして実装されています。 <a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#確率分布の取り扱い>確率分布の取り扱い</a><ul><li><a href=#-実現値のサンプリング>■ 実現値のサンプリング</a></li><li><a href=#-確率密度の取得>■ 確率（密度）の取得</a></li><li><a href=#-batch_shapeとevent_shape>■ batch_shapeとevent_shape</a><ul><li><a href=#-batch_shape>▼ batch_shape</a></li><li><a href=#-event_shape>▼ event_shape</a></li><li><a href=#-従属変数化-to_event>▼ 従属変数化 <code>to_event()</code></a></li></ul></li><li><a href=#-ベイズ学習へ>■ ベイズ学習へ</a></li></ul></li></ul></nav></div></aside></main></body></html>
